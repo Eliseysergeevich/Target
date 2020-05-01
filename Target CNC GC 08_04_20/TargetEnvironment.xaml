@@ -9,7 +9,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
-        Title="Мишенная обстановка" MinHeight="700" MinWidth="1000" Width="1000" Height="700" Closed="Window_Closed" >
+        Title="Мишенная обстановка" MinHeight="700" MinWidth="1050" Width="1050" Height="700" Closed="Window_Closed" KeyDown="Window_KeyDown" >
     <Window.Resources>
            
         <col:ArrayList x:Key="TargetListRes">
@@ -50,6 +50,10 @@
                 <TextBlock  Text="Мишень №8"/>
             </StackPanel>
         </col:ArrayList>
+        <Style TargetType="TextBox" x:Key="tbStyle">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
     </Window.Resources>
     <Grid x:Name="Grid1" Background="LightGray">
        
@@ -142,8 +146,8 @@
                     </Grid.RowDefinitions>
                     <TextBlock Text="Ширина" Grid.Row="0" Grid.Column="0" />
                     <TextBlock Text="Длина" Grid.Row="1" Grid.Column="0"/>
-                    <TextBox x:Name="fieldWidth" Grid.Row="0" Grid.Column="1" />
-                    <TextBox x:Name="fieldlengdth" Grid.Row="1" Grid.Column="1"/>
+                    <TextBox x:Name="fieldWidth" Grid.Row="0" Grid.Column="1" Foreground="Black"/>
+                    <TextBox x:Name="fieldlengdth" Grid.Row="1" Grid.Column="1" Foreground="Black"/>
                 </Grid>
             </GroupBox>
         </Grid>
@@ -204,16 +208,63 @@
 
             </StackPanel>
             <Grid Grid.Column="1">
-                <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False" CellEditEnding ="TargetsDataGrid_CellEditEnding" BeginningEdit="TargetsDataGrid_BeginningEdit" SelectedCellsChanged="TargetsDataGrid_SelectedCellsChanged" SelectionChanged="TargetsDataGrid_SelectionChanged">
-                    <DataGrid.Columns >
-                        <DataGridTextColumn x:Name="qwe" Header="Обозначение" FontSize="14" Binding="{Binding Path=NameTarget}" />
-                        <DataGridComboBoxColumn Header="Тип"  x:Name="TypeOfTargetDGCollumn" SelectedValueBinding="{Binding Path=TypeOfTarget}"/> 
-                        <DataGridTextColumn Header="Блок датчиков" FontSize="14" Binding="{Binding Path=NomberSensorsBlock}"/>
-                        <DataGridTextColumn Header="Блок индикации" FontSize="14" Binding="{Binding Path=NomberIndicationBlock}"/>
-                        <DataGridTextColumn Header="Широта" FontSize="14" Binding="{Binding Path=Latitude}"/>
-                        <DataGridTextColumn Header="Долгота" FontSize="14" Binding="{Binding Path=Longitude}"/>
-                        <DataGridTextColumn Header="Растояние до рубежа" FontSize="14" IsReadOnly="True" Binding="{Binding Path=Distance}" />
-                        <DataGridTextColumn Header="Азимут" FontSize="14" IsReadOnly="True" Binding="{Binding Path=Angle}"/>
+                <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False"
+                          CellEditEnding ="TargetsDataGrid_CellEditEnding" 
+                          BeginningEdit="TargetsDataGrid_BeginningEdit"
+                         
+                          
+                          FontSize="16">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="qwe" Header="Обозначение"  FontSize="16" Binding="{Binding Path=NameTarget}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style  TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridComboBoxColumn Header="Тип"  x:Name="TypeOfTargetDGCollumn" SelectedValueBinding="{Binding Path=TypeOfTarget}"></DataGridComboBoxColumn>
+                        <DataGridTextColumn Header="Блок датчиков" FontSize="16" Binding="{Binding Path=NomberSensorsBlock}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style  TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Блок индикации" FontSize="16" Binding="{Binding Path=NomberIndicationBlock}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style  TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Широта" FontSize="16"  Binding="{Binding Path=Latitude}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style  TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Долгота" FontSize="16" Binding="{Binding Path=Longitude}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style  TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Растояние до рубежа" FontSize="16" IsReadOnly="True" Binding="{Binding Path=Distance}" >
+                            <DataGridTextColumn.ElementStyle>
+                                <Style  TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Азимут" FontSize="16" IsReadOnly="True" Binding="{Binding Path=Angle}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns> 
                 </DataGrid>
             </Grid>

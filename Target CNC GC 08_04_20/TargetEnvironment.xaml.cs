@@ -189,6 +189,7 @@ namespace Target_CNC_GC_08_04_20
             {
                 Field.startLatitude = double.Parse(startLatitudeTB.Text);
                 DistanceCalculete();
+                UpdateTargetList();
             } else MessageBox.Show("Некоректный ввод", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
@@ -197,7 +198,8 @@ namespace Target_CNC_GC_08_04_20
             if (App.NomberMore0Double(startLongitudeTB.Text)) 
             { 
                 Field.startLongitude = double.Parse(startLongitudeTB.Text);
-                DistanceCalculete(); 
+                DistanceCalculete();
+                UpdateTargetList();
             }
             else MessageBox.Show("Некоректный ввод", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
@@ -273,21 +275,25 @@ namespace Target_CNC_GC_08_04_20
         private void nlRB_Checked(object sender, RoutedEventArgs e)
         {
             Field.startLatitude = Math.Abs( Field.startLatitude);
+            UpdateTargetList();
         }
 
         private void slRB_Checked(object sender, RoutedEventArgs e)
         {
             Field.startLatitude = Math.Abs(Field.startLatitude)*(-1);
+            UpdateTargetList();
         }
 
         private void wlRB_Checked(object sender, RoutedEventArgs e)
         {
             Field.startLongitude = Math.Abs(Field.startLongitude) * (-1);
+            UpdateTargetList();
         }
 
         private void elRB_Checked(object sender, RoutedEventArgs e)
         {
             Field.startLongitude = Math.Abs(Field.startLongitude);
+            UpdateTargetList();
         }
 
         private void TargenNameTB_TextChanged(object sender, TextChangedEventArgs e)
@@ -330,23 +336,19 @@ namespace Target_CNC_GC_08_04_20
             DistanceCalculete();
         }
 
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                AddTargenButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+        }
+
         private void WLonNewRB_Checked(object sender, RoutedEventArgs e)
         {
             DistanceCalculete();
         }
 
-        private void TargetsDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            DataGridRow dataRow = this.TargetsDataGrid.SelectedItem as DataGridRow;
-            
-
-        }
-
-        private void TargetsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DataGridRow dataRow = TargetsDataGrid.SelectedCells as DataGridRow;
-           
-        }
+        
 
         private void ELonNewRB_Checked(object sender, RoutedEventArgs e)
         {
@@ -364,13 +366,13 @@ namespace Target_CNC_GC_08_04_20
                 {
                     MessageBox.Show("Обозначение мишени необходимо указать", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     e.Cancel = true;
-                    
+                    return;
                 }
                 if (!OriginalName(editedTextbox.Text)&&(mameTargetGBTemp!= editedTextbox.Text))
                 {
                     MessageBox.Show($"Мишень {editedTextbox.Text} уже имеется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     e.Cancel = true;
-                    
+                    return;
                 }
             }
             if (e.Column.DisplayIndex == 2)
@@ -380,13 +382,13 @@ namespace Target_CNC_GC_08_04_20
                 {
                     MessageBox.Show("Номер блока датчиков необходимо указать", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     e.Cancel = true;
-                    
+                    return;
                 }
                 if (!OriginalSensorNomber(editedTextbox.Text)&&(nomberSensorBlockDGTemp != editedTextbox.Text))
                 {
                     MessageBox.Show($"Блок датчиков {editedTextbox.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     e.Cancel = true;
-
+                    return;
                 }
             }
             if (e.Column.DisplayIndex == 3)
@@ -396,7 +398,7 @@ namespace Target_CNC_GC_08_04_20
                 {
                     MessageBox.Show("Номер блока индикации необходимо указать", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     e.Cancel = true;
-
+                    return;
                 }
                 
             }
@@ -419,18 +421,68 @@ namespace Target_CNC_GC_08_04_20
                         {
                             MessageBox.Show("Некоректный ввод", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                             e.Cancel = true;
+                            return;
                         }
                     }
                     if (Math.Abs(double.Parse(editedTextbox.Text)) > 90)
                     {
-                        MessageBox.Show("Широта должна быть в диапазоне от 0 до 90", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Широта должна быть в диапазоне от -90 до 90", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                         e.Cancel = true;
+                        return;
                     }
                 }
-
+                var editedTarget= e.Row.Item as Target;
+                editedTarget.Distance = Math.Round(Field.DistanceCulc(double.Parse(editedTextbox.Text), editedTarget.Longitude, Field.startLatitude, Field.startLongitude));
+                editedTarget.Angle = Math.Round(editedTarget.AngleField(double.Parse(editedTextbox.Text), editedTarget.Longitude, Field.startLatitude, Field.startLongitude) - editedTarget.AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude), 2);
+                editedTarget.Latitude = double.Parse(editedTextbox.Text);
+                //MessageBox.Show(editedTarget.Distance.ToString());
                 editedTextbox.Text = editedTextbox.Text.Replace("," , ".");
+                //e.Cancel = false;
+                TargetsDataGrid.ItemsSource = null;
+                TargetsDataGrid.ItemsSource = TargetList;
 
             }
+            if (e.Column.DisplayIndex == 5)
+            {
+                var editedTextbox = e.EditingElement as TextBox;
+                editedTextbox.Text = editedTextbox.Text.Replace(".", ",");
+
+                if (editedTextbox.Text == "")
+                {
+                    editedTextbox.Text = "0";
+
+                }
+
+                else
+                {
+                    if (editedTextbox.Text[0] == '-')
+                    {
+                        string strTemp = editedTextbox.Text.Substring(1); if (!App.NomberMore0Double(strTemp))
+                        {
+                            MessageBox.Show("Некоректный ввод", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                    if (Math.Abs(double.Parse(editedTextbox.Text)) > 180)
+                    {
+                        MessageBox.Show("Широта должна быть в диапазоне от -180 до 180", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                var editedTarget = e.Row.Item as Target;
+                editedTarget.Distance = Math.Round(Field.DistanceCulc(editedTarget.Latitude, double.Parse(editedTextbox.Text), Field.startLatitude, Field.startLongitude));
+                editedTarget.Angle = Math.Round(editedTarget.AngleField(editedTarget.Latitude, double.Parse(editedTextbox.Text), Field.startLatitude, Field.startLongitude) - editedTarget.AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude), 2);
+                editedTarget.Longitude = double.Parse(editedTextbox.Text);
+                //MessageBox.Show(editedTarget.Distance.ToString());
+                editedTextbox.Text = editedTextbox.Text.Replace(",", ".");
+                //e.Cancel = false;
+                TargetsDataGrid.ItemsSource = null;
+                TargetsDataGrid.ItemsSource = TargetList;
+
+            }
+
         }
 
         private void TargetsDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
@@ -510,6 +562,18 @@ namespace Target_CNC_GC_08_04_20
         {
             Process.Start("https://www.ngdc.noaa.gov/geomag/data/poles/pole_locations.txt");
         }
+
+        void UpdateTargetList() 
+        {
+            foreach (Target tar in TargetList)
+            {
+                tar.Distance = Math.Round(tar.DistanceCulc(tar.Latitude, tar.Longitude, Field.startLatitude, Field.startLongitude));
+                tar.Angle = Math.Round((tar.AngleField(tar.Latitude, tar.Longitude, Field.startLatitude, Field.startLongitude) - Field.AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude)), 2);
+            }
+            TargetsDataGrid.ItemsSource = null;
+            TargetsDataGrid.ItemsSource = TargetList;
+        }
+       
     }
     
 
