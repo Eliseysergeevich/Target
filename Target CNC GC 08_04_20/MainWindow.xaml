@@ -1,0 +1,59 @@
+﻿<Window x:Class="Target_CNC_GC_08_04_20.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Target_CNC_GC_08_04_20"
+        mc:Ignorable="d"
+        Icon="Imag\CNCGC.png"
+        MinHeight="450" MinWidth="800"
+        Title="Target CNC GC" Height="450" Width="800">
+
+
+    <Grid x:Name="Grid0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="AUTO"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <StackPanel.Background>
+                <LinearGradientBrush  StartPoint="0,0" EndPoint="0.9,0.0">
+                    <GradientStop Color="Gray" Offset="0" />
+                    <GradientStop Color="White" Offset="1" />
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            <Button x:Name="situation"  Content="Обстановка" Click="situation_Click"/>
+            <Button x:Name="Exercise"  Content="Конструктор" Click="Exercise_Click"/>
+            <Button x:Name="Person"  Content="Участники" Click="Person_Click"/>
+            <Button x:Name="Competitions"  Content="Соревнование" Click="Competitions_Click"/>
+
+        </StackPanel>
+        <Grid x:Name="Grid1" Grid.Column="1" Visibility="Visible">
+            <Grid.Background>
+                <LinearGradientBrush  StartPoint="0.3,0" EndPoint="1,1">
+                    <GradientStop Color="Gray" Offset="1.8" />
+                    <GradientStop Color="White" Offset="0.15" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="Header" Margin="7" FontSize="25" FontFamily="Arial" Text="Соревнование" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Image Source="Imag\23КЦУА.png" Width="150" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            <Grid Name="can" Grid.Row="1">
+              
+            </Grid>
+
+        </Grid>
+        <Grid x:Name="Grid3">
+
+        </Grid>
+
+
+
+
+        <Button x:Name="Setings"  Content="Настройки" VerticalAlignment="Bottom" Click="Setings_Click"/>
+
+    </Grid>
+</Window>
