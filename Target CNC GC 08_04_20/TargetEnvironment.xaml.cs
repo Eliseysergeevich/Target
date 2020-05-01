@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,26 +25,31 @@ namespace Target_CNC_GC_08_04_20
     /// </summary>
     public partial class TargetEnvironment : Window
     {
-        ObservableCollection<Target> TargetList = new ObservableCollection<Target> { };
-        ObservableCollection<TargetView> TargetViewList = new ObservableCollection<TargetView> { };
-        string nomberSensorBlockTemp, nomberIndicationBlockTemp, targetLatitudeTemp, targetLongitudeTemp;
+        ObservableCollection<Target> TargetList = new ObservableCollection<Target> { }; //Коллекция мишеней
+   
+       
+        string mameTargetTemp,nomberSensorBlockTemp, nomberIndicationBlockTemp, targetLatitudeTemp, targetLongitudeTemp;//Последние корректные значения в области добавления
+        string mameTargetGBTemp,nomberSensorBlockDGTemp, nomberIndicationBlockDGTemp, targetLatitudeDGTemp, targetLongitudeDGTemp;//Значения перед корректировкой DataGrid
         double targetLat, targetLon;
+
         public TargetEnvironment()
         {
             InitializeComponent();
+            
+            //Задание начальных значений 
             string path = @"FieldData.txt";
             using (StreamReader st = new StreamReader(path, System.Text.Encoding.UTF8))
             {
                 string line;
-                if ((line = st.ReadLine()) != null) 
+                if ((line = st.ReadLine()) != null)
                 {
                     line.Trim();
                     string[] words = line.Split(new char[] { ' ' });
                     if (words.Length == 4)
                     {
-                        if (double.Parse(words[0])>=0) nlNMPRB.IsChecked=true; 
+                        if (double.Parse(words[0]) >= 0) nlNMPRB.IsChecked = true;
                         else slNMPRB.IsChecked = true;
-                      
+
                         if (double.Parse(words[1]) >= 0) elNMPRB.IsChecked = true;
                         else wlNMPRB.IsChecked = true;
 
@@ -69,16 +75,37 @@ namespace Target_CNC_GC_08_04_20
             fieldlengdth.Text = "100";
             NLatNewRB.IsChecked = true;
             ELonNewRB.IsChecked = true;
-            TypeOfTargetDGCollumn.ItemsSource = Target.tupeOfTargetArray;
-            //TargetTypeCB.ItemsSource = Target.tupeOfTargetArray;
-            TargetView target200 = new TargetView("Гонг 200", "Imag/200.png");
-            TargetView target300 = new TargetView("Гонг 300", "Imag/300.png");
-            TargetViewList.Add(target200);
-            TargetViewList.Add(target300);
-            //TargetTypeCB.ItemsSource = TargetViewList;
+            TypeOfTargetDGCollumn.ItemsSource = Target.tupeOfTargetArray;//Источник записей для типа мишений в DataGrid
             
+            // Выгрузка списка мишеней из файла
+            string TargetDataFile = @"TargetData.txt";
+            if (File.Exists(TargetDataFile))
+            {
+                using (StreamReader st = new StreamReader(TargetDataFile, System.Text.Encoding.Default))
+                {
+                    string line;
+
+                    while ((line = st.ReadLine()) != null)
+                    {
+                        line=line.Trim();
+                        string[] words = line.Split(new char[] { ' ' });
+                        if (words.Length == 6)
+                            TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), double.Parse(words[3]), double.Parse(words[4]), int.Parse(words[5])));
+                        else if (words.Length == 4) TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), int.Parse(words[3])));
+                    }
+                    TargetsDataGrid.ItemsSource = TargetList;
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Файл с данными о мишенях не обнаружен. \nОн будет создан автоматически.","Внимание!");
+                File.Create(TargetDataFile);
+            }
+
         }
 
+        //Добавление записи (мишени) в TargetList
         private void AddTargenButton_Click(object sender, RoutedEventArgs e)
         {
             if (!OriginalName(TargenNameTB.Text))
@@ -107,7 +134,7 @@ namespace Target_CNC_GC_08_04_20
                 MessageBox.Show("Необходимо указать номер блока индикации!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (!OriginalName(SensorBlockсTB.Text))
+            if (!OriginalSensorNomber(SensorBlockсTB.Text))
             {
                 MessageBox.Show($"Блок датчиков № {SensorBlockсTB.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -127,16 +154,27 @@ namespace Target_CNC_GC_08_04_20
                 else targetLon = Math.Abs(double.Parse(TargeLongTB.Text));
                 TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, TargetTypeCB.SelectedIndex));
             }
-            
+           
             
             TargetsDataGrid.ItemsSource = TargetList;
 
         }
-        private bool OriginalName(string newName)
+        
+        //Проверка на оригинальность обозначение мишени
+        private bool OriginalName(string newName)//Проверка на оригинальность обозначение мишени
         {
 
             foreach (Target tar in TargetList)
                 if (tar.NameTarget == newName) return false;
+            return true;
+        }
+        
+        //Проверка на оригинальность номера блока датчиков мишени
+        private bool OriginalSensorNomber(string SensorNomber)
+        {
+
+            foreach (Target tar in TargetList)
+                if (tar.NomberSensorsBlock.ToString() == SensorNomber) return false;
             return true;
         }
 
@@ -189,6 +227,27 @@ namespace Target_CNC_GC_08_04_20
                     string str = Field.nmpLat.ToString()+" "+Field.nmpLon.ToString()+" "+Field.startLatitude.ToString()+" "+Field.startLongitude.ToString();
                     st.WriteLine(str);
                 }
+
+            string TargetDataFile = @"TargetData.txt";
+
+            if (File.Exists(TargetDataFile))
+            {
+                File.Delete(TargetDataFile);
+                File.Create(TargetDataFile).Close();
+
+            }
+            
+                foreach (Target tar in TargetList)
+                    using (StreamWriter st1 = new StreamWriter(TargetDataFile, true, System.Text.Encoding.UTF8))
+                    {
+                    int typeIndex=0;
+                    for (int i = 0; i < Target.tupeOfTargetArray.Length; i++)
+                        if (Target.tupeOfTargetArray[i] == tar.TypeOfTarget.ToString()) 
+                            typeIndex = i;
+                        string str = tar.NameTarget + " " + tar.NomberSensorsBlock.ToString() + " " + tar.NomberIndicationBlock.ToString() + " " + tar.Latitude.ToString() + " " + tar.Longitude.ToString()+" "+ typeIndex.ToString();
+                        st1.WriteLine(str);
+                    }
+            
         }
 
         private void nlNMPRB_Checked(object sender, RoutedEventArgs e)
@@ -276,6 +335,19 @@ namespace Target_CNC_GC_08_04_20
             DistanceCalculete();
         }
 
+        private void TargetsDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            DataGridRow dataRow = this.TargetsDataGrid.SelectedItem as DataGridRow;
+            
+
+        }
+
+        private void TargetsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DataGridRow dataRow = TargetsDataGrid.SelectedCells as DataGridRow;
+           
+        }
+
         private void ELonNewRB_Checked(object sender, RoutedEventArgs e)
         {
             DistanceCalculete();
@@ -285,10 +357,87 @@ namespace Target_CNC_GC_08_04_20
         private void TargetsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
            
-            foreach (Target tar in TargetList)
+            if (e.Column.DisplayIndex==0) 
             {
+                var editedTextbox = e.EditingElement as TextBox;
+                if (editedTextbox.Text=="")
+                {
+                    MessageBox.Show("Обозначение мишени необходимо указать", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    e.Cancel = true;
+                    
+                }
+                if (!OriginalName(editedTextbox.Text)&&(mameTargetGBTemp!= editedTextbox.Text))
+                {
+                    MessageBox.Show($"Мишень {editedTextbox.Text} уже имеется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    e.Cancel = true;
+                    
+                }
+            }
+            if (e.Column.DisplayIndex == 2)
+            {
+                var editedTextbox = e.EditingElement as TextBox;
+                if (editedTextbox.Text == "")
+                {
+                    MessageBox.Show("Номер блока датчиков необходимо указать", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    e.Cancel = true;
+                    
+                }
+                if (!OriginalSensorNomber(editedTextbox.Text)&&(nomberSensorBlockDGTemp != editedTextbox.Text))
+                {
+                    MessageBox.Show($"Блок датчиков {editedTextbox.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    e.Cancel = true;
+
+                }
+            }
+            if (e.Column.DisplayIndex == 3)
+            {
+                var editedTextbox = e.EditingElement as TextBox;
+                if (editedTextbox.Text == "")
+                {
+                    MessageBox.Show("Номер блока индикации необходимо указать", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    e.Cancel = true;
+
+                }
+                
+            }
+            if (e.Column.DisplayIndex == 4)
+            {
+                var editedTextbox = e.EditingElement as TextBox;
+                editedTextbox.Text = editedTextbox.Text.Replace(".", ",");
+
+                if (editedTextbox.Text == "")
+                {
+                    editedTextbox.Text = "0";
+
+                }
+
+                else
+                {
+                    if (editedTextbox.Text[0] == '-')
+                    {
+                        string strTemp = editedTextbox.Text.Substring(1); if (!App.NomberMore0Double(strTemp))
+                        {
+                            MessageBox.Show("Некоректный ввод", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            e.Cancel = true;
+                        }
+                    }
+                    if (Math.Abs(double.Parse(editedTextbox.Text)) > 90)
+                    {
+                        MessageBox.Show("Широта должна быть в диапазоне от 0 до 90", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        e.Cancel = true;
+                    }
+                }
+
+                editedTextbox.Text = editedTextbox.Text.Replace("," , ".");
 
             }
+        }
+
+        private void TargetsDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            Target dataRow = e.Row.Item as Target;
+            mameTargetGBTemp = dataRow.NameTarget;
+           // MessageBox.Show(dataRow.NameTarget);
         }
 
         private void TargeLatTB_TextChanged(object sender, TextChangedEventArgs e)

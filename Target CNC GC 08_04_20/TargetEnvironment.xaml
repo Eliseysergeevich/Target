@@ -4,9 +4,53 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Target_CNC_GC_08_04_20"
+        xmlns:local1="clr-namespace:Target_CNC_GC_08_04_20.Data"
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
         Title="Мишенная обстановка" MinHeight="700" MinWidth="1000" Width="1000" Height="700" Closed="Window_Closed" >
+    <Window.Resources>
+           
+        <col:ArrayList x:Key="TargetListRes">
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 200">
+                <Image Width="50" Source="Imag\200.png"/>
+                <TextBlock  Text="Гонг 200"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 250">
+                <Image  Width="50" Source="Imag\250.png"/>
+                <TextBlock  Text="Гонг 250"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 300">
+                <Image  Width="50" Source="Imag\300.png"/>
+                <TextBlock  Text="Гонг 300"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 350">
+                <Image  Width="50" Source="Imag\350.png"/>
+                <TextBlock  Text="Гонг 350"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 400">
+                <Image  Width="50" Source="Imag\400.png"/>
+                <TextBlock  Text="Гонг 400"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №5">
+                <Image  Width="50" Source="Imag\Мишень№5.png"/>
+                <TextBlock  Text="Мишень №5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №5а">
+                <Image  Width="50" Source="Imag\Мишень№5а.png"/>
+                <TextBlock  Text="Мишень №5а"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №6">
+                <Image  Width="50" Source="Imag\Мишень№6.png"/>
+                <TextBlock  Text="Мишень №6"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №8">
+                <Image  Width="50" Source="Imag\Мишень№8.png"/>
+                <TextBlock  Text="Мишень №8"/>
+            </StackPanel>
+        </col:ArrayList>
+    </Window.Resources>
     <Grid x:Name="Grid1" Background="LightGray">
        
         <Grid.RowDefinitions>
@@ -113,43 +157,8 @@
                     <TextBox x:Name="TargenNameTB" Height="25" Foreground="Black"  TextChanged="TargenNameTB_TextChanged"/>
                 </GroupBox>
                 <GroupBox x:Name="TargetTypeGB" Header="Тип">
-                    <ComboBox x:Name="TargetTypeCB" SelectionChanged="TargetTypeCB_SelectionChanged" IsEditable="True">
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 200">
-                            <Image Width="50" Source="Imag\200.png"/>
-                            <TextBlock  Text="Гонг 200"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 250">
-                            <Image  Width="50" Source="Imag\250.png"/>
-                            <TextBlock  Text="Гонг 250"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 300">
-                            <Image  Width="50" Source="Imag\300.png"/>
-                            <TextBlock  Text="Гонг 300"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 350">
-                            <Image  Width="50" Source="Imag\350.png"/>
-                            <TextBlock  Text="Гонг 350"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 400">
-                            <Image  Width="50" Source="Imag\400.png"/>
-                            <TextBlock  Text="Гонг 400"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №5">
-                            <Image  Width="50" Source="Imag\400.png"/>
-                            <TextBlock  Text="Мишень №5"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №5а">
-                            <Image  Width="50" Source="Imag\400.png"/>
-                            <TextBlock  Text="Мишень №5а"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №6">
-                            <Image  Width="50" Source="Imag\400.png"/>
-                            <TextBlock  Text="Мишень №6"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №8">
-                            <Image  Width="50" Source="Imag\400.png"/>
-                            <TextBlock  Text="Мишень №8"/>
-                        </StackPanel>
+                    <ComboBox x:Name="TargetTypeCB" SelectionChanged="TargetTypeCB_SelectionChanged" IsEditable="True" ItemsSource="{StaticResource TargetListRes }">
+                       
 
                     </ComboBox>
                 </GroupBox>
@@ -195,16 +204,16 @@
 
             </StackPanel>
             <Grid Grid.Column="1">
-                <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False" CellEditEnding ="TargetsDataGrid_CellEditEnding">
+                <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False" CellEditEnding ="TargetsDataGrid_CellEditEnding" BeginningEdit="TargetsDataGrid_BeginningEdit" SelectedCellsChanged="TargetsDataGrid_SelectedCellsChanged" SelectionChanged="TargetsDataGrid_SelectionChanged">
                     <DataGrid.Columns >
-                        <DataGridTextColumn Header="Обозначение" FontSize="14" Binding="{Binding Path=NameTarget}"  />
-                        <DataGridComboBoxColumn Header="Тип"  x:Name="TypeOfTargetDGCollumn" SelectedValueBinding="{Binding Path=TypeOfTarget}"/>
+                        <DataGridTextColumn x:Name="qwe" Header="Обозначение" FontSize="14" Binding="{Binding Path=NameTarget}" />
+                        <DataGridComboBoxColumn Header="Тип"  x:Name="TypeOfTargetDGCollumn" SelectedValueBinding="{Binding Path=TypeOfTarget}"/> 
                         <DataGridTextColumn Header="Блок датчиков" FontSize="14" Binding="{Binding Path=NomberSensorsBlock}"/>
                         <DataGridTextColumn Header="Блок индикации" FontSize="14" Binding="{Binding Path=NomberIndicationBlock}"/>
                         <DataGridTextColumn Header="Широта" FontSize="14" Binding="{Binding Path=Latitude}"/>
                         <DataGridTextColumn Header="Долгота" FontSize="14" Binding="{Binding Path=Longitude}"/>
-                        <DataGridTextColumn Header="Растояние до рубежа" FontSize="14" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Азимут" FontSize="14" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Растояние до рубежа" FontSize="14" IsReadOnly="True" Binding="{Binding Path=Distance}" />
+                        <DataGridTextColumn Header="Азимут" FontSize="14" IsReadOnly="True" Binding="{Binding Path=Angle}"/>
                     </DataGrid.Columns> 
                 </DataGrid>
             </Grid>

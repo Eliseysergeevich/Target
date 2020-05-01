@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -11,9 +12,13 @@ namespace Target_CNC_GC_08_04_20
     /// <summary>
     /// Логика взаимодействия для App.xaml
     /// </summary>
+    /// 
+    
     public partial class App : Application
     {
-       public static bool q;
+        public static bool q;
+        
+        
         public static bool NomberMore0Int(string st)
         {
             string inputString = st;

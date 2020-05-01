@@ -42,14 +42,15 @@ namespace Target_CNC_GC_08_04_20
     public partial class MainWindow : Window
     {
         WindowsViews temp = new WindowsViews();
+        
         int count;
         public MainWindow()
         {
             InitializeComponent();
         
             temp.WindowsName = WindowsViews.WindowsView.situation;
-
-            DispatcherTimer timer = new DispatcherTimer();
+             
+        DispatcherTimer timer = new DispatcherTimer();
             //timer.Tick += new EventHandler(timer_Tick);
             //timer.Interval = new TimeSpan(0, 0, 0,0,10);
             //timer.Start();

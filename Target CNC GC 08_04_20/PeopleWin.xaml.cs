@@ -37,12 +37,11 @@ namespace Target_CNC_GC_08_04_20
                 
                 while ((line = st.ReadLine()) != null)
                 {
-                    line.Trim();
+                    line=line.Trim();
                     string[] words = line.Split(new char[] { ' ' });
                     if (words.Length == 5)
                     {
                         PersonList.Add(new Person(int.Parse(words[0]), int.Parse(words[1]), words[2], words[3], words[4]));
-                       
                     }
                     
                 }
