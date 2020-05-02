@@ -42,7 +42,21 @@
             <TextBlock x:Name="Header" Margin="7" FontSize="25" FontFamily="Arial" Text="Соревнование" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <Image Source="Imag\23КЦУА.png" Width="150" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top"/>
             <Grid Name="can" Grid.Row="1">
-              
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="45"/>
+                </Grid.RowDefinitions>
+                
+                <ProgressBar x:Name="TimeNow"/>
+
+                <TextBlock x:Name="dataSerialTB" Width="150" Height="250"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" >
+                    <ComboBox Name="portsCB" Width="100" Height="25" HorizontalAlignment="Left" Margin="10,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove"/>
+                    <Button x:Name="conectBT" Content="Conect"  Grid.Row="1" Click="conectBT_Click"/>
+                    <Button x:Name="disConectBT" Content="Disconect"  Grid.Row="1" Click="disConectBT_Click"/>
+                    
+                </StackPanel>
+                
             </Grid>
 
         </Grid>
