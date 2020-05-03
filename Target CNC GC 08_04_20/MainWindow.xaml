@@ -47,16 +47,65 @@
                     <RowDefinition/>
                     <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
-                <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер"  Binding="{Binding Path=Nomber}"/>
-                        <DataGridTextColumn Header="Напряжение В."  Binding="{Binding Path=Voltage}"/>
-                        <DataGridTextColumn Header="Напряжение %."  Binding="{Binding Path=VoltageP}"/>
-                        <DataGridTextColumn Header="Датчик 1"  Binding="{Binding Path=Sensor1}"/>
-                        <DataGridTextColumn Header="Датчик 2"  Binding="{Binding Path=Sensor2}"/>
-                        <DataGridTextColumn Header="Время"  Binding="{Binding Path=LastMessTime}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
+                            <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
+                            <DataGridTemplateColumn Header="Напряжение %" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ProgressBar x:Name="procentPower" Width="100" Value="{Binding Path=VoltageP}"/>
+                                            <TextBlock FontSize="16" Text="{Binding Path=VoltageP}"/>
+                                        </StackPanel>
+
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Датчик 1">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Width="30" Source="Imag\bullet_hole_PNG6055.png" Opacity="{Binding Path=Sensor1}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Датчик 2">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Width="30" Source="Imag\bullet_hole_PNG6055.png" Opacity="{Binding Path=Sensor2}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <DataGrid x:Name="indicationDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
+                            <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
+                            <DataGridTemplateColumn Header="Напряжение %" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ProgressBar x:Name="procentPower" Width="100" Value="{Binding Path=VoltageP}"/>
+                                            <TextBlock FontSize="16" Text="{Binding Path=VoltageP}"/>
+                                        </StackPanel>
+
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Режим" Binding="{Binding Path=Type}"/>
+                            <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+                
                 <ProgressBar x:Name="TimeNow" Grid.Row="1"/>
 
                

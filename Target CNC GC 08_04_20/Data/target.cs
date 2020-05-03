@@ -184,10 +184,6 @@ namespace Target_CNC_GC_08_04_20
             Angle = Math.Round(AngleField(Latitude, Longitude, Field.startLatitude, Field.startLongitude) - AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude), 2);
         }
 
-        public double Sum()
-        {
-            return this.Latitude + this.Longitude;
-        }
 
         public static implicit operator Target(ObservableCollection<Target> v)
         {

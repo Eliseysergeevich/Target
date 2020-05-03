@@ -48,6 +48,7 @@ namespace Target_CNC_GC_08_04_20
         SerialPort ArduinoPort = new SerialPort();
         private delegate void updateDelegate(string txt);
         ObservableCollection<Sensors> SensorsList = new ObservableCollection<Sensors> { }; //Коллекция блоков датчиков
+        ObservableCollection<IndicationBlock> IndicationList = new ObservableCollection<IndicationBlock> { }; //Коллекция блоков индикации
         int count;
         public MainWindow()
         {
@@ -57,10 +58,12 @@ namespace Target_CNC_GC_08_04_20
             string[] ports = SerialPort.GetPortNames();
             portsCB.ItemsSource = ports;
 
-            DispatcherTimer timer = new DispatcherTimer();
+            DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
+            
             timer.Tick += new EventHandler(timer_Tick);
-           // timer.Tick += new EventHandler(timerCOM_Tick);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+           
+            // timer.Tick += new EventHandler(timerCOM_Tick);
+            timer.Interval = new TimeSpan(0, 0, 0, 0,100);
             timer.Start();
 
             //aTimer = new System.Timers.Timer(1500);
@@ -97,11 +100,7 @@ namespace Target_CNC_GC_08_04_20
             TimeNow.Value = count;
             if (count == 100) count = 0;
         }
-        public void AddCount()
-        {
-            count++;
-            TimeNow.Value = count;
-        }
+       
 
         private void timerCOM_Tick(object sender, EventArgs e)
         {
@@ -154,6 +153,37 @@ namespace Target_CNC_GC_08_04_20
                     SensorsList.Add(new Sensors(int.Parse(inputStr[1]), int.Parse(inputStr[2]), int.Parse(inputStr[3]), int.Parse(inputStr[4])));
                     sensorsDG.ItemsSource = null;
                     sensorsDG.ItemsSource = SensorsList;
+                }
+            }
+            if (inputStr[0] == "2")
+            {
+                if (IndicationList.Count == 0)// Если блоки датчиков отсутствуют в коллекции
+                {
+                    IndicationList.Add(new IndicationBlock(int.Parse(inputStr[1]), int.Parse(inputStr[2]), int.Parse(inputStr[3])));
+                    indicationDG.ItemsSource = null;
+                    indicationDG.ItemsSource = IndicationList;
+                }
+                else
+                {
+                    //bool newSens = true;
+                    foreach (IndicationBlock indicationBlock in IndicationList)
+                    {
+                        if (indicationBlock.Nomber == int.Parse(inputStr[1]))
+                        {
+                            //newSens = false;
+                            indicationBlock.Voltage = int.Parse(inputStr[2]);
+                            indicationBlock.VoltageP = int.Parse(inputStr[2]);
+                            indicationBlock.Type = int.Parse(inputStr[3]);
+                            indicationBlock.LastMessTime = DateTime.Now;
+                            indicationDG.ItemsSource = null;
+                            var sortedUsersInd = IndicationList.OrderBy(u => u.Nomber);
+                            indicationDG.ItemsSource = sortedUsersInd;
+                            return;
+                        }
+                    }
+                    IndicationList.Add(new IndicationBlock(int.Parse(inputStr[1]), int.Parse(inputStr[2]), int.Parse(inputStr[3])));
+                    indicationDG.ItemsSource = null;
+                    indicationDG.ItemsSource = IndicationList;
                 }
             }
         }
@@ -239,15 +269,28 @@ namespace Target_CNC_GC_08_04_20
 
         private  void DataReceivedHandler( object sender, SerialDataReceivedEventArgs e)
         {
-            string indata = ArduinoPort.ReadLine();
-           
-            dataSerialTB.Dispatcher.Invoke(new updateDelegate(updateTextBox), indata);
+            if (ArduinoPort.IsOpen) {
+                try
+                {
+                    string indata = ArduinoPort.ReadLine();
+
+                    dataSerialTB.Dispatcher.BeginInvoke(new updateDelegate(updateTextBox), indata);
+                }
+                catch
+                { 
+                    MessageBox.Show("Что-то не так");
+
+
+                }
             
+            }
+
 
         }
 
         private void disConectBT_Click(object sender, RoutedEventArgs e)
         {
+            
             ArduinoPort.Close();
         }
 

@@ -20,13 +20,6 @@ namespace Target_CNC_GC_08_04_20
 
        ObservableCollection<Person> PersonList = new ObservableCollection<Person>();
 
-        public static Person[] GetPersons()
-        {
-            var resalt = new Person[]
-            {
-            };
-            return resalt;
-        }
         public Person(int nomber, int scvod, string name, string fam, string middleName  ) {
             Name = name;
             Fam = fam;
