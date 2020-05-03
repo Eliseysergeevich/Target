@@ -17,8 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO.Ports;
 using System.Windows.Threading;
-
-
+using Target_CNC_GC_08_04_20.Data;
 
 namespace Target_CNC_GC_08_04_20
 {
@@ -48,7 +47,7 @@ namespace Target_CNC_GC_08_04_20
         WindowsViews temp = new WindowsViews();
         SerialPort ArduinoPort = new SerialPort();
         private delegate void updateDelegate(string txt);
-        System.Timers.Timer aTimer;
+        ObservableCollection<Sensors> SensorsList = new ObservableCollection<Sensors> { }; //Коллекция блоков датчиков
         int count;
         public MainWindow()
         {
@@ -60,8 +59,8 @@ namespace Target_CNC_GC_08_04_20
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
-            timer.Tick += new EventHandler(timerCOM_Tick);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 20);
+           // timer.Tick += new EventHandler(timerCOM_Tick);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
 
             //aTimer = new System.Timers.Timer(1500);
@@ -123,6 +122,40 @@ namespace Target_CNC_GC_08_04_20
         public  void updateTextBox(string txt)
         {
             dataSerialTB.Text = txt;
+            txt = txt.Trim(',');
+            string[] inputStr = txt.Split(',');
+            if (inputStr[0] == "1")
+            {
+                if (SensorsList.Count == 0)// Если блоки датчиков отсутствуют в коллекции
+                {
+                    SensorsList.Add(new Sensors(int.Parse(inputStr[1]), int.Parse(inputStr[2]), int.Parse(inputStr[3]), int.Parse(inputStr[4])));
+                    sensorsDG.ItemsSource = null;
+                    sensorsDG.ItemsSource = SensorsList;
+                }
+                else
+                {
+                    //bool newSens = true;
+                    foreach (Sensors sens in SensorsList)
+                    {
+                        if (sens.Nomber == int.Parse(inputStr[1]))
+                        {
+                            //newSens = false;
+                            sens.Voltage = int.Parse(inputStr[2]);
+                            sens.VoltageP= int.Parse(inputStr[2]);
+                            sens.Sensor1 = Convert.ToBoolean(int.Parse(inputStr[3]));
+                            sens.Sensor2 = Convert.ToBoolean(int.Parse(inputStr[4]));
+                            sens.LastMessTime = DateTime.Now;
+                            sensorsDG.ItemsSource = null;
+                            var sortedUsers = SensorsList.OrderBy(u => u.Nomber);
+                            sensorsDG.ItemsSource = sortedUsers;
+                            return;
+                        }
+                    }
+                    SensorsList.Add(new Sensors(int.Parse(inputStr[1]), int.Parse(inputStr[2]), int.Parse(inputStr[3]), int.Parse(inputStr[4])));
+                    sensorsDG.ItemsSource = null;
+                    sensorsDG.ItemsSource = SensorsList;
+                }
+            }
         }
 
 
@@ -187,7 +220,8 @@ namespace Target_CNC_GC_08_04_20
         {
             ArduinoPort.PortName = portsCB.Text;
             ArduinoPort.BaudRate = 9600;
-           // ArduinoPort.ReceivedBytesThreshold = 16;
+            //ArduinoPort.ReadBufferSize = 1024;
+            //ArduinoPort.ReceivedBytesThreshold = 5;
             //ArduinoPort.RtsEnable = true;
             //ArduinoPort.ReadTimeout = 1000;
             ArduinoPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
@@ -203,13 +237,12 @@ namespace Target_CNC_GC_08_04_20
             }
         }
 
-        private  void DataReceivedHandler(
-                       object sender,
-                       SerialDataReceivedEventArgs e)
+        private  void DataReceivedHandler( object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort sp = (SerialPort)sender;
-            string indata = sp.ReadExisting();
+            string indata = ArduinoPort.ReadLine();
+           
             dataSerialTB.Dispatcher.Invoke(new updateDelegate(updateTextBox), indata);
+            
 
         }
 
@@ -230,7 +263,11 @@ namespace Target_CNC_GC_08_04_20
             string[] ports = SerialPort.GetPortNames();
             portsCB.ItemsSource = ports;
         }
-        
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (ArduinoPort.IsOpen) ArduinoPort.Close();
+        }
     }
     
 

@@ -210,9 +210,7 @@
             <Grid Grid.Column="1">
                 <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False"
                           CellEditEnding ="TargetsDataGrid_CellEditEnding" 
-                          BeginningEdit="TargetsDataGrid_BeginningEdit"
-                         
-                          
+                          BeginningEdit="TargetsDataGrid_BeginningEdit"                        
                           FontSize="16">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="qwe" Header="Обозначение"  FontSize="16" Binding="{Binding Path=NameTarget}">

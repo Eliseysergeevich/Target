@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
         MinHeight="450" MinWidth="800"
-        Title="Target CNC GC" Height="450" Width="800">
+        Title="Target CNC GC" Height="450" Width="800" Closing="Window_Closing">
 
 
     <Grid x:Name="Grid0">
@@ -44,17 +44,27 @@
             <Grid Name="can" Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
+                    <RowDefinition/>
                     <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
-                
-                <ProgressBar x:Name="TimeNow"/>
+                <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер"  Binding="{Binding Path=Nomber}"/>
+                        <DataGridTextColumn Header="Напряжение В."  Binding="{Binding Path=Voltage}"/>
+                        <DataGridTextColumn Header="Напряжение %."  Binding="{Binding Path=VoltageP}"/>
+                        <DataGridTextColumn Header="Датчик 1"  Binding="{Binding Path=Sensor1}"/>
+                        <DataGridTextColumn Header="Датчик 2"  Binding="{Binding Path=Sensor2}"/>
+                        <DataGridTextColumn Header="Время"  Binding="{Binding Path=LastMessTime}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <ProgressBar x:Name="TimeNow" Grid.Row="1"/>
 
-                <TextBlock x:Name="dataSerialTB" Width="150" Height="250"/>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" >
+               
+                <StackPanel Grid.Row="2" Orientation="Horizontal" >
                     <ComboBox Name="portsCB" Width="100" Height="25" HorizontalAlignment="Left" Margin="10,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove"/>
                     <Button x:Name="conectBT" Content="Conect"  Grid.Row="1" Click="conectBT_Click"/>
                     <Button x:Name="disConectBT" Content="Disconect"  Grid.Row="1" Click="disConectBT_Click"/>
-                    
+                    <TextBlock x:Name="dataSerialTB" Width="150" />
                 </StackPanel>
                 
             </Grid>
