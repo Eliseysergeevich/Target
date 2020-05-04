@@ -55,9 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Exercise.cs" />
     <Compile Include="Data\IndicationBlock.cs" />
     <Compile Include="Data\People.cs" />
     <Compile Include="Data\Sensors.cs" />
+    <Compile Include="Data\Shows.cs" />
     <Compile Include="Data\TargetView.cs" />
     <Compile Include="PeopleWin.xaml.cs">
       <DependentUpon>PeopleWin.xaml</DependentUpon>

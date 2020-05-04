@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Target_CNC_GC_08_04_20"
+        xmlns:local1="clr-namespace:Target_CNC_GC_08_04_20.Data"
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
         MinHeight="450" MinWidth="800"
         Title="Target CNC GC" Height="450" Width="800" Closing="Window_Closing">
+    <Window.Resources>
 
+    </Window.Resources>
 
     <Grid x:Name="Grid0">
         <Grid.ColumnDefinitions>
@@ -22,10 +25,38 @@
                     <GradientStop Color="White" Offset="1" />
                 </LinearGradientBrush>
             </StackPanel.Background>
-            <Button x:Name="situation"  Content="Обстановка" Click="situation_Click"/>
-            <Button x:Name="Exercise"  Content="Конструктор" Click="Exercise_Click"/>
-            <Button x:Name="Person"  Content="Участники" Click="Person_Click"/>
-            <Button x:Name="Competitions"  Content="Соревнование" Click="Competitions_Click"/>
+            <Button x:Name="situation"  Content="Обстановка" Click="situation_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0.9">
+                        <GradientStop Color="Firebrick" Offset="0.868"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Exercise"  Content="Конструктор" Click="Exercise_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0.9">
+                        <GradientStop Color="Firebrick" Offset="0.868"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Person"  Content="Участники" Click="Person_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0.9">
+                        <GradientStop Color="Firebrick" Offset="0.868"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Competitions"  Content="Соревнование" Click="Competitions_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0.9">
+                        <GradientStop Color="Firebrick" Offset="0.868"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
 
         </StackPanel>
         <Grid x:Name="Grid1" Grid.Column="1" Visibility="Visible">
@@ -47,75 +78,130 @@
                     <RowDefinition/>
                     <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
-                            <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
-                            <DataGridTemplateColumn Header="Напряжение %" >
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <ProgressBar x:Name="procentPower" Width="100" Value="{Binding Path=VoltageP}"/>
-                                            <TextBlock FontSize="16" Text="{Binding Path=VoltageP}"/>
-                                        </StackPanel>
+                <TabControl SelectionChanged="TabControl_SelectionChanged">
+                    <TabItem Header="Монитор сети">
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110*"/>
+                                <ColumnDefinition Width="203*"/>
+                                <ColumnDefinition Width="313*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
+                                    <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
+                                    <DataGridTemplateColumn Header="Напряжение %" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <ProgressBar x:Name="procentPower" Width="100" Value="{Binding Path=VoltageP}"/>
+                                                    <TextBlock FontSize="16" Text="{Binding Path=VoltageP}"/>
+                                                </StackPanel>
 
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="Датчик 1">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Width="30" Source="Imag\bullet_hole_PNG6055.png" Opacity="{Binding Path=Sensor1}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Датчик 2">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Width="30" Source="Imag\bullet_hole_PNG6055.png" Opacity="{Binding Path=Sensor2}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <DataGrid x:Name="indicationDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="1">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
-                            <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
-                            <DataGridTemplateColumn Header="Напряжение %" >
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <ProgressBar x:Name="procentPower" Width="100" Value="{Binding Path=VoltageP}"/>
-                                            <TextBlock FontSize="16" Text="{Binding Path=VoltageP}"/>
-                                        </StackPanel>
+                                    <DataGridTemplateColumn Header="Датчик 1">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Image Width="30" Source="Imag\bullet_hole_PNG6055.png" Opacity="{Binding Path=Sensor1}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Датчик 2">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Image Width="30" Source="Imag\bullet_hole_PNG6055.png" Opacity="{Binding Path=Sensor2}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <DataGrid x:Name="indicationDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
+                                    <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
+                                    <DataGridTemplateColumn Header="Напряжение %" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <ProgressBar x:Name="procentPower" Width="100" Value="{Binding Path=VoltageP}"/>
+                                                    <TextBlock FontSize="16" Text="{Binding Path=VoltageP}"/>
+                                                </StackPanel>
 
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Режим" Binding="{Binding Path=Type}"/>
-                            <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-                
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Режим" Binding="{Binding Path=Type}"/>
+                                    <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="SettingsShow" Header="Настройка показов" >
+                        <StackPanel>
+                            <Button x:Name="Add" Content="Создать" Width="75" Height="25" HorizontalAlignment="Left" Click="ButtonAddShow_Click"/>
+                            <DataGrid x:Name="ShowsDG" AutoGenerateColumns="False"
+                                     CellEditEnding="ShowsDG_CellEditEnding"
+                                      BeginningEdit="ShowsDG_BeginningEdit">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Порядок" IsReadOnly="True" Binding="{Binding Path=Serial}"/>
+                                    <DataGridComboBoxColumn Header="Мишень" x:Name="TypeTargetOfShowDG" SelectedValueBinding="{Binding Path=Target}"/>
+                                    <DataGridTextColumn Header="Время подготовки" Binding="{Binding Path=PreTimeSec}"/>
+                                    <DataGridTextColumn Header="Время показа" Binding="{Binding Path=ShowTimeSec}"/>
+                                    <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}"/>
+                                    <DataGridTemplateColumn Header="Вверх">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock x:Name="up" Text="^" Background="Gray" Margin="0" Foreground="Black" Width="50" Height="25" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Вниз">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock x:Name="down" Text="v" Background="Gray" Margin="0" Foreground="Black" Width="50" Height="25" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+                        </StackPanel>
+
+                    </TabItem>
+                    <TabItem Header="Упражнение">
+
+                    </TabItem>
+                </TabControl>
+
+
                 <ProgressBar x:Name="TimeNow" Grid.Row="1"/>
 
-               
+
                 <StackPanel Grid.Row="2" Orientation="Horizontal" >
-                    <ComboBox Name="portsCB" Width="100" Height="25" HorizontalAlignment="Left" Margin="10,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove"/>
-                    <Button x:Name="conectBT" Content="Conect"  Grid.Row="1" Click="conectBT_Click"/>
-                    <Button x:Name="disConectBT" Content="Disconect"  Grid.Row="1" Click="disConectBT_Click"/>
-                    <TextBlock x:Name="dataSerialTB" Width="150" />
+                    <ComboBox Name="portsCB" Width="100" Height="25" HorizontalAlignment="Left" Margin="10,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}"/>
+                    <Button x:Name="conectBT" Content="Подключить"  Grid.Row="1" Click="conectBT_Click">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                <GradientStop Color="Firebrick" Offset="0.2"/>
+                                <GradientStop Color="White"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="disConectBT" Content="Отключить"  Grid.Row="1" Click="disConectBT_Click">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                <GradientStop Color="Firebrick" Offset="0.271"/>
+                                <GradientStop Color="White"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <TextBlock x:Name="dataSerialTB" Width="150" Text="{Binding Path=RealTime100ms}" />
                 </StackPanel>
-                
+
             </Grid>
 
         </Grid>
@@ -126,7 +212,14 @@
 
 
 
-        <Button x:Name="Setings"  Content="Настройки" VerticalAlignment="Bottom" Click="Setings_Click"/>
+        <Button x:Name="Setings"  Content="Настройки" VerticalAlignment="Bottom" Click="Setings_Click">
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,0.9" EndPoint="1,1">
+                    <GradientStop Color="Firebrick" Offset="0.911"/>
+                    <GradientStop Color="White" Offset="0.971"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
 
     </Grid>
 </Window>

@@ -40,7 +40,7 @@ namespace Target_CNC_GC_08_04_20
        public WindowsView WindowsName { get; set; }
 
     }
-   
+
 
     public partial class MainWindow : Window
     {
@@ -49,21 +49,29 @@ namespace Target_CNC_GC_08_04_20
         private delegate void updateDelegate(string txt);
         ObservableCollection<Sensors> SensorsList = new ObservableCollection<Sensors> { }; //Коллекция блоков датчиков
         ObservableCollection<IndicationBlock> IndicationList = new ObservableCollection<IndicationBlock> { }; //Коллекция блоков индикации
-        int count;
+        ObservableCollection<Exercise> ExerciseList = new ObservableCollection<Exercise> { }; //Коллекция упражнений
+        ObservableCollection<Shows> ShowsList = new ObservableCollection<Shows> { }; //Коллекция показов
+        List<string> AllTargetName = new List<string>();
+        public int count;
+        Exercise exercise = new Exercise();
+
+
         public MainWindow()
         {
             InitializeComponent();
-        
+
+            exercise.RealTime100ms = 0;
+
+            App.LoadTarget();//Формирование коллекции мишеней при запуске программы
+
             temp.WindowsName = WindowsViews.WindowsView.situation;
             string[] ports = SerialPort.GetPortNames();
             portsCB.ItemsSource = ports;
 
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
-            
             timer.Tick += new EventHandler(timer_Tick);
-           
             // timer.Tick += new EventHandler(timerCOM_Tick);
-            timer.Interval = new TimeSpan(0, 0, 0, 0,100);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timer.Start();
 
             //aTimer = new System.Timers.Timer(1500);
@@ -76,31 +84,17 @@ namespace Target_CNC_GC_08_04_20
             //timerCOM.Interval = new TimeSpan(0, 0, 0, 0, 20);
             //timerCOM.Start();
 
-            //ArduinoPort.PortName = portsCB.Text;
-            //ArduinoPort.BaudRate = 9600;
-            //ArduinoPort.ReceivedBytesThreshold = 40;
-            ////ArduinoPort.RtsEnable = true;
-            ////ArduinoPort.ReadTimeout = 1000;
-            //ArduinoPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-            //try
-            //{
-            //    ArduinoPort.Open();
-
-
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Неудачно");
-            //}
         }
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            count++;
-            TimeNow.Value = count;
+            exercise.RealTime100ms++;
+            TimeNow.Value = exercise.RealTime100ms;
+            // dataSerialTB.Text = exercise.RealTime100ms.ToString();
             if (count == 100) count = 0;
+            if (exercise.RealTime100ms == 100) exercise.RealTime100ms = 0;
         }
-       
+
 
         private void timerCOM_Tick(object sender, EventArgs e)
         {
@@ -118,9 +112,8 @@ namespace Target_CNC_GC_08_04_20
             //}
         }
 
-        public  void updateTextBox(string txt)
+        public void updateTextBox(string txt)
         {
-            dataSerialTB.Text = txt;
             txt = txt.Trim(',');
             string[] inputStr = txt.Split(',');
             if (inputStr[0] == "1")
@@ -140,7 +133,7 @@ namespace Target_CNC_GC_08_04_20
                         {
                             //newSens = false;
                             sens.Voltage = int.Parse(inputStr[2]);
-                            sens.VoltageP= int.Parse(inputStr[2]);
+                            sens.VoltageP = int.Parse(inputStr[2]);
                             sens.Sensor1 = Convert.ToBoolean(int.Parse(inputStr[3]));
                             sens.Sensor2 = Convert.ToBoolean(int.Parse(inputStr[4]));
                             sens.LastMessTime = DateTime.Now;
@@ -201,7 +194,7 @@ namespace Target_CNC_GC_08_04_20
             temp.WindowsName = WindowsViews.WindowsView.qwe;
         }
 
-       
+
         private void Competitions_Click(object sender, RoutedEventArgs e)
         {
             temp.WindowsName = WindowsViews.WindowsView.tyu;
@@ -228,12 +221,6 @@ namespace Target_CNC_GC_08_04_20
             //Canvas.SetTop(rect, e.GetPosition(can).Y);
         }
 
-       
-
-       
-
-       
-
         private void Person_Click(object sender, RoutedEventArgs e)
         {
             if (!App.q)
@@ -243,33 +230,39 @@ namespace Target_CNC_GC_08_04_20
                 App.q = true;
             }
 
-           // PeopleWin.Visibility = Visibility.Visible;
+            // PeopleWin.Visibility = Visibility.Visible;
         }
 
         private void conectBT_Click(object sender, RoutedEventArgs e)
         {
-            ArduinoPort.PortName = portsCB.Text;
-            ArduinoPort.BaudRate = 9600;
-            //ArduinoPort.ReadBufferSize = 1024;
-            //ArduinoPort.ReceivedBytesThreshold = 5;
-            //ArduinoPort.RtsEnable = true;
-            //ArduinoPort.ReadTimeout = 1000;
-            ArduinoPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-            try
+            if (portsCB.Text != "")
             {
-                ArduinoPort.Open();
-                
-                
+                ArduinoPort.PortName = portsCB.Text;
+                ArduinoPort.BaudRate = 9600;
+                //ArduinoPort.ReadBufferSize = 1024;
+                //ArduinoPort.ReceivedBytesThreshold = 5;
+                //ArduinoPort.RtsEnable = true;
+                //ArduinoPort.ReadTimeout = 1000;
+                ArduinoPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+                try
+                {
+                    ArduinoPort.Open();
+
+
+                }
+                catch
+                {
+                    MessageBox.Show("Неудачно");
+                }
             }
-            catch
-            {
-                MessageBox.Show("Неудачно");
-            }
+            else MessageBox.Show("Порт не выбран");
+
         }
 
-        private  void DataReceivedHandler( object sender, SerialDataReceivedEventArgs e)
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
-            if (ArduinoPort.IsOpen) {
+            if (ArduinoPort.IsOpen)
+            {
                 try
                 {
                     string indata = ArduinoPort.ReadLine();
@@ -277,12 +270,12 @@ namespace Target_CNC_GC_08_04_20
                     dataSerialTB.Dispatcher.BeginInvoke(new updateDelegate(updateTextBox), indata);
                 }
                 catch
-                { 
+                {
                     MessageBox.Show("Что-то не так");
 
 
                 }
-            
+
             }
 
 
@@ -290,13 +283,13 @@ namespace Target_CNC_GC_08_04_20
 
         private void disConectBT_Click(object sender, RoutedEventArgs e)
         {
-            
+
             ArduinoPort.Close();
         }
 
         private void portsCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+
         }
 
 
@@ -310,6 +303,108 @@ namespace Target_CNC_GC_08_04_20
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (ArduinoPort.IsOpen) ArduinoPort.Close();
+            App.UploadTarget();
+        }
+
+        //Добавление показа
+        private void ButtonAddShow_Click(object sender, RoutedEventArgs e)
+        {
+            int serialTemp = 1;
+            string targetTemp = App.TargetList[0].NameTarget;
+            int type = 1;
+            int preTimeTemp = 5;
+            int showTimeTemp = 10;
+            int startTimeTemp = 0;
+            if (ShowsList.Count > 0)
+            {
+                serialTemp = ShowsList.Count + 1;
+                startTimeTemp = AlltimeBefor();
+            }
+            ShowsList.Add(new Shows(serialTemp, targetTemp, type, preTimeTemp, showTimeTemp, startTimeTemp));
+            ShowsDG.ItemsSource = ShowsList;
+        }
+
+        private int AlltimeBefor()
+        {
+            int sum = 0;
+            foreach (Shows sh in ShowsList)
+            {
+                sum += sh.PreTimeSec + sh.ShowTimeSec;
+            }
+            return sum;
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SettingsShow.IsSelected)
+            {
+                AllTargetName.Clear();
+                foreach (Target tg in App.TargetList)
+                {
+                    AllTargetName.Add(tg.NameTarget);
+                }
+                TypeTargetOfShowDG.ItemsSource = AllTargetName;
+            }
+        }
+
+        private void ShowsDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            
+
+        }
+
+        private void ShowsDG_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if (e.Column.DisplayIndex == 5)
+            {
+                var temp = e.Row.Item as Shows;
+                if (temp.Serial < ShowsList.Count)
+                {
+                    foreach (Shows sh in ShowsList)
+                    {
+                        if (sh.Serial == temp.Serial + 1)
+                        {
+                            sh.Serial = temp.Serial;
+                            sh.StartTime -= temp.PreTimeSec+temp.ShowTimeSec;
+                            temp.StartTime+= sh.PreTimeSec + sh.ShowTimeSec;
+                        }
+                    }
+                    temp.Serial++;
+                }
+                ShowsDG.ItemsSource = null;
+                ShowsDG.ItemsSource = ShowsList;
+            }
+            if (e.Column.DisplayIndex == 6)
+            {
+                var temp = e.Row.Item as Shows;
+                if (temp.Serial>1)
+                {
+                    foreach (Shows sh in ShowsList)
+                    {
+                        if (sh.Serial == temp.Serial - 1)
+                        {
+                            sh.Serial = temp.Serial;
+                            sh.StartTime += temp.PreTimeSec + temp.ShowTimeSec;
+                            temp.StartTime -= sh.PreTimeSec + sh.ShowTimeSec;
+                        }
+                    }
+                    temp.Serial--;
+                }
+                ShowsDG.ItemsSource = null;
+                ShowsDG.ItemsSource = ShowsList;
+            }
+           
+        }
+
+        private void up_Click(object sender, RoutedEventArgs e)
+        {
+            
+           
+        }
+
+        private void down_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
     

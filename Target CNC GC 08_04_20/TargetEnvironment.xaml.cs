@@ -25,7 +25,7 @@ namespace Target_CNC_GC_08_04_20
     /// </summary>
     public partial class TargetEnvironment : Window
     {
-        ObservableCollection<Target> TargetList = new ObservableCollection<Target> { }; //Коллекция мишеней
+        //ObservableCollection<Target> TargetList = new ObservableCollection<Target> { }; //Коллекция мишеней
    
        
         string mameTargetTemp,nomberSensorBlockTemp, nomberIndicationBlockTemp, targetLatitudeTemp, targetLongitudeTemp;//Последние корректные значения в области добавления
@@ -76,32 +76,33 @@ namespace Target_CNC_GC_08_04_20
             NLatNewRB.IsChecked = true;
             ELonNewRB.IsChecked = true;
             TypeOfTargetDGCollumn.ItemsSource = Target.tupeOfTargetArray;//Источник записей для типа мишений в DataGrid
-            
+            TargetsDataGrid.ItemsSource = App.TargetList;
+
             // Выгрузка списка мишеней из файла
-            string TargetDataFile = @"TargetData.txt";
-            if (File.Exists(TargetDataFile))
-            {
-                using (StreamReader st = new StreamReader(TargetDataFile, System.Text.Encoding.Default))
-                {
-                    string line;
+            //string TargetDataFile = @"TargetData.txt";
+            //if (File.Exists(TargetDataFile))
+            //{
+            //    using (StreamReader st = new StreamReader(TargetDataFile, System.Text.Encoding.Default))
+            //    {
+            //        string line;
 
-                    while ((line = st.ReadLine()) != null)
-                    {
-                        line=line.Trim();
-                        string[] words = line.Split(new char[] { ' ' });
-                        if (words.Length == 6)
-                            TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), double.Parse(words[3]), double.Parse(words[4]), int.Parse(words[5])));
-                        else if (words.Length == 4) TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), int.Parse(words[3])));
-                    }
-                    TargetsDataGrid.ItemsSource = TargetList;
+            //        while ((line = st.ReadLine()) != null)
+            //        {
+            //            line=line.Trim();
+            //            string[] words = line.Split(new char[] { ' ' });
+            //            if (words.Length == 6)
+            //                App.TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), double.Parse(words[3]), double.Parse(words[4]), int.Parse(words[5])));
+            //            else if (words.Length == 4) App.TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), int.Parse(words[3])));
+            //        }
+            //        TargetsDataGrid.ItemsSource = App.TargetList;
 
-                }
-            }
-            else
-            {
-                MessageBox.Show("Файл с данными о мишенях не обнаружен. \nОн будет создан автоматически.","Внимание!");
-                File.Create(TargetDataFile);
-            }
+            //    }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Файл с данными о мишенях не обнаружен. \nОн будет создан автоматически.","Внимание!");
+            //    File.Create(TargetDataFile);
+            //}
 
         }
 
@@ -145,18 +146,18 @@ namespace Target_CNC_GC_08_04_20
                 return;
             }
             if ((TargeLongTB.Text == "") && (TargeLatTB.Text == ""))
-                TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), TargetTypeCB.SelectedIndex));
+                App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), TargetTypeCB.SelectedIndex));
             else
             {
                 if (SLatNewRB.IsChecked == true) targetLat = Math.Abs(double.Parse(TargeLatTB.Text)) * (-1);
                 else targetLat = Math.Abs(double.Parse(TargeLatTB.Text));
                 if (WLonNewRB.IsChecked == true) targetLon = Math.Abs(double.Parse(TargeLongTB.Text)) * (-1);
                 else targetLon = Math.Abs(double.Parse(TargeLongTB.Text));
-                TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, TargetTypeCB.SelectedIndex));
+                App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, TargetTypeCB.SelectedIndex));
             }
            
             
-            TargetsDataGrid.ItemsSource = TargetList;
+            TargetsDataGrid.ItemsSource = App.TargetList;
 
         }
         
@@ -164,7 +165,7 @@ namespace Target_CNC_GC_08_04_20
         private bool OriginalName(string newName)//Проверка на оригинальность обозначение мишени
         {
 
-            foreach (Target tar in TargetList)
+            foreach (Target tar in App.TargetList)
                 if (tar.NameTarget == newName) return false;
             return true;
         }
@@ -173,7 +174,7 @@ namespace Target_CNC_GC_08_04_20
         private bool OriginalSensorNomber(string SensorNomber)
         {
 
-            foreach (Target tar in TargetList)
+            foreach (Target tar in App.TargetList)
                 if (tar.NomberSensorsBlock.ToString() == SensorNomber) return false;
             return true;
         }
@@ -216,39 +217,7 @@ namespace Target_CNC_GC_08_04_20
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            string path = @"FieldData.txt";
-
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-                File.Create(path).Close();
-
-            }           
-                using (StreamWriter st = new StreamWriter(path, true, System.Text.Encoding.UTF8))
-                {
-                    string str = Field.nmpLat.ToString()+" "+Field.nmpLon.ToString()+" "+Field.startLatitude.ToString()+" "+Field.startLongitude.ToString();
-                    st.WriteLine(str);
-                }
-
-            string TargetDataFile = @"TargetData.txt";
-
-            if (File.Exists(TargetDataFile))
-            {
-                File.Delete(TargetDataFile);
-                File.Create(TargetDataFile).Close();
-
-            }
             
-                foreach (Target tar in TargetList)
-                    using (StreamWriter st1 = new StreamWriter(TargetDataFile, true, System.Text.Encoding.UTF8))
-                    {
-                    int typeIndex=0;
-                    for (int i = 0; i < Target.tupeOfTargetArray.Length; i++)
-                        if (Target.tupeOfTargetArray[i] == tar.TypeOfTarget.ToString()) 
-                            typeIndex = i;
-                        string str = tar.NameTarget + " " + tar.NomberSensorsBlock.ToString() + " " + tar.NomberIndicationBlock.ToString() + " " + tar.Latitude.ToString() + " " + tar.Longitude.ToString()+" "+ typeIndex.ToString();
-                        st1.WriteLine(str);
-                    }
             
         }
 
@@ -439,7 +408,7 @@ namespace Target_CNC_GC_08_04_20
                 editedTextbox.Text = editedTextbox.Text.Replace("," , ".");
                 //e.Cancel = false;
                 TargetsDataGrid.ItemsSource = null;
-                TargetsDataGrid.ItemsSource = TargetList;
+                TargetsDataGrid.ItemsSource = App.TargetList;
 
             }
             if (e.Column.DisplayIndex == 5)
@@ -479,7 +448,7 @@ namespace Target_CNC_GC_08_04_20
                 editedTextbox.Text = editedTextbox.Text.Replace(",", ".");
                 //e.Cancel = false;
                 TargetsDataGrid.ItemsSource = null;
-                TargetsDataGrid.ItemsSource = TargetList;
+                TargetsDataGrid.ItemsSource = App.TargetList;
 
             }
 
@@ -565,13 +534,13 @@ namespace Target_CNC_GC_08_04_20
 
         void UpdateTargetList() 
         {
-            foreach (Target tar in TargetList)
+            foreach (Target tar in App.TargetList)
             {
                 tar.Distance = Math.Round(tar.DistanceCulc(tar.Latitude, tar.Longitude, Field.startLatitude, Field.startLongitude));
                 tar.Angle = Math.Round((tar.AngleField(tar.Latitude, tar.Longitude, Field.startLatitude, Field.startLongitude) - Field.AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude)), 2);
             }
             TargetsDataGrid.ItemsSource = null;
-            TargetsDataGrid.ItemsSource = TargetList;
+            TargetsDataGrid.ItemsSource = App.TargetList;
         }
        
     }
