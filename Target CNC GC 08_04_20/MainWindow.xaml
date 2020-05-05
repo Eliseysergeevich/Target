@@ -5,11 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Target_CNC_GC_08_04_20"
         xmlns:local1="clr-namespace:Target_CNC_GC_08_04_20.Data"
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
         MinHeight="450" MinWidth="800"
-        Title="Target CNC GC" Height="450" Width="800" Closing="Window_Closing">
+        Title="Target CNC GC" Height="750" Width="1200" Closing="Window_Closing">
     <Window.Resources>
+        <col:ArrayList x:Key="TargetListRes">
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 200">
+                <Image Width="50" Source="Imag\200.png"/>
+                <TextBlock  Text="Гонг 200"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 250">
+                <Image  Width="50" Source="Imag\250.png"/>
+                <TextBlock  Text="Гонг 250"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 300">
+                <Image  Width="50" Source="Imag\300.png"/>
+                <TextBlock  Text="Гонг 300"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 350">
+                <Image  Width="50" Source="Imag\350.png"/>
+                <TextBlock  Text="Гонг 350"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 400">
+                <Image  Width="50" Source="Imag\400.png"/>
+                <TextBlock  Text="Гонг 400"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №5">
+                <Image  Width="50" Source="Imag\Мишень№5.png"/>
+                <TextBlock  Text="Мишень №5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №5а">
+                <Image  Width="50" Source="Imag\Мишень№5а.png"/>
+                <TextBlock  Text="Мишень №5а"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №6">
+                <Image  Width="50" Source="Imag\Мишень№6.png"/>
+                <TextBlock  Text="Мишень №6"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" TextSearch.Text="Мишень №8">
+                <Image  Width="50" Source="Imag\Мишень№8.png"/>
+                <TextBlock  Text="Мишень №8"/>
+            </StackPanel>
+        </col:ArrayList>
+        <Style TargetType="TextBox" x:Key="tbStyle">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
 
     </Window.Resources>
 
@@ -33,7 +76,7 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
-            <Button x:Name="Exercise"  Content="Конструктор" Click="Exercise_Click">
+            <Button x:Name="Exercise"  Content="Конструктор">
                 <Button.Background>
                     <LinearGradientBrush StartPoint="0,0.9">
                         <GradientStop Color="Firebrick" Offset="0.868"/>
@@ -49,7 +92,7 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
-            <Button x:Name="Competitions"  Content="Соревнование" Click="Competitions_Click">
+            <Button x:Name="Competitions"  Content="Соревнование" >
                 <Button.Background>
                     <LinearGradientBrush StartPoint="0,0.9">
                         <GradientStop Color="Firebrick" Offset="0.868"/>
@@ -60,6 +103,10 @@
 
         </StackPanel>
         <Grid x:Name="Grid1" Grid.Column="1" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="305*"/>
+                <ColumnDefinition Width="211*"/>
+            </Grid.ColumnDefinitions>
             <Grid.Background>
                 <LinearGradientBrush  StartPoint="0.3,0" EndPoint="1,1">
                     <GradientStop Color="Gray" Offset="1.8" />
@@ -70,15 +117,319 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="Header" Margin="7" FontSize="25" FontFamily="Arial" Text="Соревнование" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <Image Source="Imag\23КЦУА.png" Width="150" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-            <Grid Name="can" Grid.Row="1">
+            <TextBlock x:Name="Header" Margin="7,11,0,10" FontSize="25" FontFamily="Arial" Text="Соревнование" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Image Source="Imag\23КЦУА.png" Width="150" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1"/>
+            <Grid Name="WorkPlace" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
                 <TabControl SelectionChanged="TabControl_SelectionChanged">
+                    <TabItem Header="Упражнение">
+                        <ProgressBar x:Name="TimeNow" Grid.Row="1"/>
+                    </TabItem>
+                    <TabItem x:Name="SettingsExercise" Header="Конструктор упражнений" >
+                        <Grid x:Name="SettingExerciseGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.5*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid x:Name="SettingsExerciseGrid" Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="90"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="90"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Упражнение" HorizontalAlignment="Center"/>
+                                <GroupBox x:Name="ExerciseNameCB" Grid.Row="1" Header="Наименование">
+                                    <TextBox x:Name="ExerciseNameTB"  Foreground="Black"/>
+                                </GroupBox>
+                                <GroupBox Header="Координаты рубежа" FontSize="14" Margin="2,5,2,5"  Grid.Row="2">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Широта" Grid.Row="0" Grid.Column="0" />
+                                        <TextBlock Text="Долгота" Grid.Row="1" Grid.Column="0" />
+                                        <Grid Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="latitudeStart" x:Name="nlRB" Content="с.ш." Grid.Column="0" />
+                                            <RadioButton GroupName="latitudeStart" x:Name="slRB" Content="ю.ш." Grid.Column="1" />
+                                        </Grid>
+                                        <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="longitudeStart" x:Name="wlRB" Content="з.д."  Grid.Column="0" />
+                                            <RadioButton GroupName="longitudeStart" x:Name="elRB" Content="в.д." Grid.Column="1" />
+                                        </Grid>
+                                        <TextBox x:Name="startLatitudeTB" Grid.Row="0" Grid.Column="2"  Foreground="Black"/>
+                                        <TextBox x:Name="startLongitudeTB" Grid.Row="1" Grid.Column="2" Foreground="Black"/>
+                                    </Grid>
+                                </GroupBox>
+                                <Grid Grid.Row="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Время упражнения, сек - "/>
+                                    <Label x:Name="AllTimeExerciseLB" Grid.Column="1" HorizontalAlignment="Left"/>
+                                </Grid>
+                                <GroupBox Header="Описание" Grid.Row="4">
+                                    <TextBox x:Name="AboutExerciseTB" TextWrapping="Wrap" Width="auto" Height="auto"/>
+                                </GroupBox>
+                                <Button x:Name="AddExerciseBut" Grid.Row="5" HorizontalAlignment="Left" Content="Добавить" Click="AddExerciseBut_Click"/>
+                                <DataGrid x:Name="ExerciseDG" AutoGenerateColumns="False" Grid.Row="6">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Наименование" Binding="{Binding Path=Name}"/>
+                                        <DataGridTextColumn Header="Широта рубежа" Binding="{Binding Path=StartLatitude}"/>
+                                        <DataGridTextColumn Header="Долгота рубежа" Binding="{Binding Path=StartLongitude}"/>
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowDetailsTemplate>
+                                        <DataTemplate>
+                                            <Label Content="{Binding Path=Description}"/>
+                                        </DataTemplate>
+                                    </DataGrid.RowDetailsTemplate>
+                                </DataGrid>
+                            </Grid>
+                            <Grid x:Name="SettingsTargetGrid" Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="90"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="90"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Мишенная обстановка" HorizontalAlignment="Center"/>
+                                <GroupBox Header="Координаты магнитного севера" FontSize="14" Margin="2,5,2,5"  Grid.Row="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Широта" Grid.Row="0" Grid.Column="0" />
+                                        <TextBlock Text="Долгота" Grid.Row="1" Grid.Column="0" />
+                                        <Grid Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="latitudeNMP" x:Name="nlNMPRB" Content="с.ш." Grid.Column="0"  IsEnabled="False"/>
+                                            <!--Checked="nlNMPRB_Checked"-->
+                                            <RadioButton GroupName="latitudeNMP" x:Name="slNMPRB" Content="ю.ш." Grid.Column="1" IsEnabled="False"/>
+                                            <!--Checked="slNMPRB_Checked"-->
+                                        </Grid>
+                                        <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="longitudeNMP" x:Name="wlNMPRB" Content="з.д." Grid.Column="0"   IsEnabled="False"/>
+                                            <!--Checked="wlNMPRB_Checked"-->
+                                            <RadioButton GroupName="longitudeNMP" x:Name="elNMPRB" Content="в.д." Grid.Column="1"  IsEnabled="False"/>
+                                            <!--Checked="elNMPRB_Checked"-->
+                                        </Grid>
+                                        <TextBox x:Name="nmpLat" Grid.Row="0" Grid.Column="2" IsReadOnly="True" />
+                                        <!--TextChanged="nmpLat_TextChanged"-->
+                                        <TextBox x:Name="nmpLon" Grid.Row="1" Grid.Column="2" IsReadOnly="True"/>
+                                    </Grid>
+                                </GroupBox>
+
+                                <Grid  Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox x:Name="TargetNameCB" Grid.Column="0" Header="Обозначение">
+                                        <TextBox x:Name="TargenNameTB"  Foreground="Black" />
+                                    </GroupBox>
+                                    <GroupBox x:Name="TargetTypeGB" Grid.Column="1" Header="Тип">
+                                        <ComboBox x:Name="TargetTypeCB" Height="25"  IsEditable="True" ItemsSource="{StaticResource TargetListRes }">
+                                        </ComboBox>
+                                    </GroupBox>
+                                </Grid>
+                                <Grid Grid.Row="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox x:Name="SensorBlockCB" Grid.Column="0" Header="Блок датчиков">
+                                        <TextBox x:Name="SensorBlockсTB" Height="25" Foreground="Black"  />
+                                    </GroupBox>
+                                    <GroupBox x:Name="IndicationBlockCB" Grid.Column="1" Header="Блок индикации">
+                                        <TextBox x:Name="IndicationBlockTB" Height="25" Foreground="Black"  />
+                                    </GroupBox>
+                                </Grid>
+                                <GroupBox x:Name="TargetCoordinatesGB" Grid.Row="4" Header="Координаты">
+                                    <Grid >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBox x:Name="TargeLatTB" Grid.Column="0" Grid.Row="0" Height="25" Margin="3" Foreground="Black"  />
+                                        <Grid Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="latitudeNew" x:Name="NLatNewRB" Content="с.ш." Grid.Column="0"  />
+                                            <RadioButton GroupName="latitudeNew" x:Name="SLatNewRB" Content="ю.ш." Grid.Column="1"  />
+                                        </Grid>
+                                        <TextBox x:Name="TargeLongTB" Grid.Column="1" Grid.Row="0" Height="25" Margin="3" Foreground="Black"  />
+                                        <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton GroupName="longetudeNew" x:Name="WLonNewRB" Content="з.д." Grid.Column="0"  />
+                                            <RadioButton GroupName="longetudeNew" x:Name="ELonNewRB" Content="в.д." Grid.Column="1"  />
+                                        </Grid>
+                                    </Grid>
+                                </GroupBox>
+                                <Grid Grid.Row="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox x:Name="DistanceCB" Grid.Column="0" Header="До мишени, м"  >
+                                        <TextBox x:Name="DistanceTB" IsReadOnly="True" Background="Gainsboro"/>
+                                    </GroupBox>
+                                    <GroupBox x:Name="AngleCB" Grid.Column="1" Header="Азимут">
+                                        <TextBox x:Name="AngleTB" IsReadOnly="True" Background="Gainsboro"/>
+                                    </GroupBox>
+                                </Grid>
+                                <Button x:Name="AddTargenButton" Grid.Row="6" HorizontalAlignment="Left" Content="Добавить"  />
+                                <Grid Grid.Row="7">
+                                    <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False"
+                          
+                         
+                          FontSize="16">
+                                        <!--CellEditEnding ="TargetsDataGrid_CellEditEnding"-->
+                                        <!--BeginningEdit="TargetsDataGrid_BeginningEdit"-->
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn x:Name="qwe" Header="Обозначение"  FontSize="16" Binding="{Binding Path=NameTarget}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style  TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridComboBoxColumn Header="Тип"  x:Name="TypeOfTargetDGCollumn" SelectedValueBinding="{Binding Path=TypeOfTarget}"></DataGridComboBoxColumn>
+                                            <DataGridTextColumn Header="Блок датчиков" FontSize="16" Binding="{Binding Path=NomberSensorsBlock}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style  TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Блок индикации" FontSize="16" Binding="{Binding Path=NomberIndicationBlock}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style  TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Широта" FontSize="16"  Binding="{Binding Path=Latitude}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style  TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Долгота" FontSize="16" Binding="{Binding Path=Longitude}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style  TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Растояние до рубежа" FontSize="16" IsReadOnly="True" Binding="{Binding Path=Distance}" >
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style  TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Азимут" FontSize="16" IsReadOnly="True" Binding="{Binding Path=Angle}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+
+
+                            </Grid>
+                            <Grid x:Name="SettingsShowsGrid" Grid.Column="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Настройка показов" HorizontalAlignment="Center"/>
+                                <Button x:Name="Add" Grid.Row="1" Content="Создать" Height="25" HorizontalAlignment="Left" Click="ButtonAddShow_Click"/>
+                                <DataGrid x:Name="ShowsDG" Grid.Row="2" AutoGenerateColumns="False"
+                                     CellEditEnding="ShowsDG_CellEditEnding"
+                                      BeginningEdit="ShowsDG_BeginningEdit">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Порядок" IsReadOnly="True" Binding="{Binding Path=Serial}"/>
+                                        <DataGridComboBoxColumn Header="Мишень" x:Name="TypeTargetOfShowDG" SelectedValueBinding="{Binding Path=Target}"/>
+                                        <DataGridTextColumn Header="Время подготовки" Binding="{Binding Path=PreTimeSec}"/>
+                                        <DataGridTextColumn Header="Время показа" Binding="{Binding Path=ShowTimeSec}"/>
+                                        <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}"/>
+                                        <DataGridTemplateColumn Header="Вверх">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Image x:Name="up" Source="Imag/up.png" Width="50" Height="25" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Вниз">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Image x:Name="down" Source="Imag/down.png" Margin="0"  Width="50" Height="25" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+
+                                </DataGrid>
+                            </Grid>
+
+                        </Grid>
+
+                    </TabItem>
                     <TabItem Header="Монитор сети">
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
@@ -140,46 +491,9 @@
                             </DataGrid>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="SettingsShow" Header="Настройка показов" >
-                        <StackPanel>
-                            <Button x:Name="Add" Content="Создать" Width="75" Height="25" HorizontalAlignment="Left" Click="ButtonAddShow_Click"/>
-                            <DataGrid x:Name="ShowsDG" AutoGenerateColumns="False"
-                                     CellEditEnding="ShowsDG_CellEditEnding"
-                                      BeginningEdit="ShowsDG_BeginningEdit">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Порядок" IsReadOnly="True" Binding="{Binding Path=Serial}"/>
-                                    <DataGridComboBoxColumn Header="Мишень" x:Name="TypeTargetOfShowDG" SelectedValueBinding="{Binding Path=Target}"/>
-                                    <DataGridTextColumn Header="Время подготовки" Binding="{Binding Path=PreTimeSec}"/>
-                                    <DataGridTextColumn Header="Время показа" Binding="{Binding Path=ShowTimeSec}"/>
-                                    <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}"/>
-                                    <DataGridTemplateColumn Header="Вверх">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock x:Name="up" Text="^" Background="Gray" Margin="0" Foreground="Black" Width="50" Height="25" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Вниз">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock x:Name="down" Text="v" Background="Gray" Margin="0" Foreground="Black" Width="50" Height="25" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
 
-                            </DataGrid>
-                        </StackPanel>
 
-                    </TabItem>
-                    <TabItem Header="Упражнение">
-
-                    </TabItem>
                 </TabControl>
-
-
-                <ProgressBar x:Name="TimeNow" Grid.Row="1"/>
-
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" >
                     <ComboBox Name="portsCB" Width="100" Height="25" HorizontalAlignment="Left" Margin="10,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}"/>

@@ -28,8 +28,8 @@ namespace Target_CNC_GC_08_04_20
         //ObservableCollection<Target> TargetList = new ObservableCollection<Target> { }; //Коллекция мишеней
    
        
-        string mameTargetTemp,nomberSensorBlockTemp, nomberIndicationBlockTemp, targetLatitudeTemp, targetLongitudeTemp;//Последние корректные значения в области добавления
-        string mameTargetGBTemp,nomberSensorBlockDGTemp, nomberIndicationBlockDGTemp, targetLatitudeDGTemp, targetLongitudeDGTemp;//Значения перед корректировкой DataGrid
+        string nomberSensorBlockTemp, nomberIndicationBlockTemp, targetLatitudeTemp, targetLongitudeTemp;//Последние корректные значения в области добавления
+        string mameTargetGBTemp,nomberSensorBlockDGTemp;//Значения перед корректировкой DataGrid
         double targetLat, targetLon;
 
         public TargetEnvironment()

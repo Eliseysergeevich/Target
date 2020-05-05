@@ -159,5 +159,9 @@
   <ItemGroup>
     <Resource Include="Imag\bullet_hole_PNG6055.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Imag\up.png" />
+    <Resource Include="Imag\down.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

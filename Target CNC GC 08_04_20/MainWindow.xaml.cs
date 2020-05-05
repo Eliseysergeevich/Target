@@ -21,31 +21,11 @@ using Target_CNC_GC_08_04_20.Data;
 
 namespace Target_CNC_GC_08_04_20
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
-    /// 
-    
-    class WindowsViews
-    {
-        public enum WindowsView
-        {
-            situation,
-            qwe,
-            tyu,
-            jkl
-
-        }
-
-       public WindowsView WindowsName { get; set; }
-
-    }
-
-
+   
     public partial class MainWindow : Window
     {
-        WindowsViews temp = new WindowsViews();
-        SerialPort ArduinoPort = new SerialPort();
+        
+        SerialPort ArduinoPort = new SerialPort();//Создаём последовательный порт 
         private delegate void updateDelegate(string txt);
         ObservableCollection<Sensors> SensorsList = new ObservableCollection<Sensors> { }; //Коллекция блоков датчиков
         ObservableCollection<IndicationBlock> IndicationList = new ObservableCollection<IndicationBlock> { }; //Коллекция блоков индикации
@@ -53,26 +33,29 @@ namespace Target_CNC_GC_08_04_20
         ObservableCollection<Shows> ShowsList = new ObservableCollection<Shows> { }; //Коллекция показов
         List<string> AllTargetName = new List<string>();
         public int count;
-        Exercise exercise = new Exercise();
+        //Exercise exercise = new Exercise();
 
 
         public MainWindow()
         {
             InitializeComponent();
 
-            exercise.RealTime100ms = 0;
+            //exercise.RealTime100ms = 0;
 
             App.LoadTarget();//Формирование коллекции мишеней при запуске программы
 
-            temp.WindowsName = WindowsViews.WindowsView.situation;
-            string[] ports = SerialPort.GetPortNames();
+            string[] ports = SerialPort.GetPortNames();// массив строк с именами всех COM портов в системе
             portsCB.ItemsSource = ports;
 
+            //Создание и параметризация таймера
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
             timer.Tick += new EventHandler(timer_Tick);
             // timer.Tick += new EventHandler(timerCOM_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timer.Start();
+
+            nlRB.IsChecked = true;
+            elRB.IsChecked = true;
 
             //aTimer = new System.Timers.Timer(1500);
             //aTimer.Elapsed += timerCOM_Tick;
@@ -84,35 +67,45 @@ namespace Target_CNC_GC_08_04_20
             //timerCOM.Interval = new TimeSpan(0, 0, 0, 0, 20);
             //timerCOM.Start();
 
-        }
+            //Выгрузка данных об упражнениях при загрузке программы
+            string path = @"ExerciseName.txt";
+            using (StreamReader st = new StreamReader(path, System.Text.Encoding.UTF8))
+            {
+                string line;
+                while ((line = st.ReadLine()) != null)
+                {
+                    line.Trim();
+                    string[] words = line.Split(new char[] { ' ' });
+                    if (words.Length > 3)
+                    {
+                        string discriptionTemp = "";
+                        for (int i = 3; i < words.Length; i++)
+                            discriptionTemp = discriptionTemp + words[i] + " ";
+                        ExerciseList.Add(new Exercise(words[0], double.Parse(words[1]), double.Parse(words[2]), discriptionTemp));
+                        ExerciseDG.ItemsSource = ExerciseList;
+                    }
+                }
+            }
+        } 
+        
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            exercise.RealTime100ms++;
-            TimeNow.Value = exercise.RealTime100ms;
-            // dataSerialTB.Text = exercise.RealTime100ms.ToString();
-            if (count == 100) count = 0;
-            if (exercise.RealTime100ms == 100) exercise.RealTime100ms = 0;
+            //exercise.RealTime100ms++;
+            //TimeNow.Value = exercise.RealTime100ms;
+            //// dataSerialTB.Text = exercise.RealTime100ms.ToString();
+            //if (count == 100) count = 0;
+            //if (exercise.RealTime100ms == 100) exercise.RealTime100ms = 0;
         }
 
 
         private void timerCOM_Tick(object sender, EventArgs e)
         {
-            //if (ArduinoPort.IsOpen)
-            //{
-            //    try
-            //    {
-            //        // ArduinoPort.DiscardInBuffer();
-            //        string returnMessage = ArduinoPort.ReadLine();
-            //        dataSerialTB.Dispatcher.BeginInvoke(new updateDelegate(updateTextBox), returnMessage);
-
-            //        //ArduinoPort.Close();
-            //    }
-            //    catch { ArduinoPort.Close(); }
-            //}
+          
         }
 
-        public void updateTextBox(string txt)
+        //Чтение данных с COM порта
+        public void updateCOMData(string txt)
         {
             txt = txt.Trim(',');
             string[] inputStr = txt.Split(',');
@@ -182,24 +175,13 @@ namespace Target_CNC_GC_08_04_20
         }
 
 
-
         private void situation_Click(object sender, RoutedEventArgs e)
         {
             TargetEnvironment TargetEnvironment = new TargetEnvironment();
             TargetEnvironment.Show();
         }
 
-        private void Exercise_Click(object sender, RoutedEventArgs e)
-        {
-            temp.WindowsName = WindowsViews.WindowsView.qwe;
-        }
-
-
-        private void Competitions_Click(object sender, RoutedEventArgs e)
-        {
-            temp.WindowsName = WindowsViews.WindowsView.tyu;
-        }
-
+   
         private void Setings_Click(object sender, RoutedEventArgs e)
         {
             Window1 window1 = new Window1();
@@ -207,6 +189,7 @@ namespace Target_CNC_GC_08_04_20
         }
         Random rnd = new Random(50);
         //Random rnd1 = new Random(50);
+
         private void rect_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //Canvas.SetLeft(rect, e.GetPosition(can).X);
@@ -229,10 +212,9 @@ namespace Target_CNC_GC_08_04_20
                 person.Show();
                 App.q = true;
             }
-
-            // PeopleWin.Visibility = Visibility.Visible;
         }
-
+        
+        //Соединение с COM портом
         private void conectBT_Click(object sender, RoutedEventArgs e)
         {
             if (portsCB.Text != "")
@@ -258,7 +240,7 @@ namespace Target_CNC_GC_08_04_20
             else MessageBox.Show("Порт не выбран");
 
         }
-
+        
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             if (ArduinoPort.IsOpen)
@@ -267,7 +249,7 @@ namespace Target_CNC_GC_08_04_20
                 {
                     string indata = ArduinoPort.ReadLine();
 
-                    dataSerialTB.Dispatcher.BeginInvoke(new updateDelegate(updateTextBox), indata);
+                    dataSerialTB.Dispatcher.BeginInvoke(new updateDelegate(updateCOMData), indata);
                 }
                 catch
                 {
@@ -336,15 +318,7 @@ namespace Target_CNC_GC_08_04_20
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SettingsShow.IsSelected)
-            {
-                AllTargetName.Clear();
-                foreach (Target tg in App.TargetList)
-                {
-                    AllTargetName.Add(tg.NameTarget);
-                }
-                TypeTargetOfShowDG.ItemsSource = AllTargetName;
-            }
+            
         }
 
         private void ShowsDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -405,6 +379,76 @@ namespace Target_CNC_GC_08_04_20
         private void down_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void AddExerciseBut_Click(object sender, RoutedEventArgs e)
+        {
+            string tempName;
+            double latitudeTemp, longitudeTemp;
+            if (ExerciseNameTB.Text == "")
+            {
+                MessageBox.Show("Отсутствует наименование упражнения!", "Ошибка");
+                ExerciseNameTB.Focus();
+                return;
+            }
+            tempName = ExerciseNameTB.Text.Trim();
+            if (!OriginalNameExercise(tempName))
+            {
+                MessageBox.Show($"Упражнение с наименованием {tempName} уже есть!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ExerciseNameTB.Focus();
+                return;
+
+            }
+            if (((startLatitudeTB.Text!="")&&(startLongitudeTB.Text==""))|| ((startLatitudeTB.Text == "") && (startLongitudeTB.Text != "")))
+            {
+                MessageBox.Show("Должны быть заполнены или обе координаты, или ни одной!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if ((startLatitudeTB.Text == "") && (startLongitudeTB.Text == ""))
+                ExerciseList.Add(new Exercise(tempName, AboutExerciseTB.Text));
+            else
+            {
+                if (slRB.IsChecked == true) latitudeTemp = Math.Abs(double.Parse(startLatitudeTB.Text)) * (-1);
+                else latitudeTemp = Math.Abs(double.Parse(startLatitudeTB.Text));
+                if (wlRB.IsChecked == true) longitudeTemp = Math.Abs(double.Parse(startLongitudeTB.Text)) * (-1);
+                else longitudeTemp = Math.Abs(double.Parse(startLongitudeTB.Text));
+                ExerciseList.Add(new Exercise(tempName, latitudeTemp, longitudeTemp, AboutExerciseTB.Text));
+                
+            }
+            ExerciseDG.ItemsSource = ExerciseList;          
+
+            //Добавление нового упражнения в файл
+            string exerciseNameFile = @"ExerciseName.txt";
+            using (StreamWriter st = new StreamWriter(exerciseNameFile, true, System.Text.Encoding.UTF8))
+            {
+
+                string str = tempName+" "+ ExerciseList[ExerciseList.Count-1].StartLatitude + " "+ ExerciseList[ExerciseList.Count - 1].StartLongitude + " "+ AboutExerciseTB.Text;
+
+                st.WriteLine(str);
+            }
+            ExerciseNameTB.Text = "";
+            startLatitudeTB.Text = "";
+            startLongitudeTB.Text = "";
+            AboutExerciseTB.Text = "";
+            try
+            {
+                string exerciseName= "Exercise/"+tempName+".txt";
+                string exerciseNamefile = @exerciseName;
+                File.Create(exerciseNamefile);
+
+            }
+            catch
+            {
+                MessageBox.Show("Не получилось создать файл");
+            }
+        }
+
+        private bool OriginalNameExercise(string newName)//Проверка на оригинальность обозначение мишени
+        {
+
+            foreach (Exercise ex in ExerciseList)
+                if (ex.Name == newName) return false;
+            return true;
         }
     }
     
