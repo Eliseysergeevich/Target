@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Target_CNC_GC_08_04_20.Data
 {
-    class Exercise
+    public class Exercise
     {
         private int realTime100ms;
         public int RealTime100ms

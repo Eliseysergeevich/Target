@@ -109,55 +109,55 @@ namespace Target_CNC_GC_08_04_20
         //Добавление записи (мишени) в TargetList
         private void AddTargenButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!OriginalName(TargenNameTB.Text))
-            {
-                MessageBox.Show($"Мишень с наименованием {TargenNameTB.Text} уже есть!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+        //    if (!OriginalName(TargenNameTB.Text))
+        //    {
+        //        MessageBox.Show($"Мишень с наименованием {TargenNameTB.Text} уже есть!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
             
-            if (TargenNameTB.Text == "")
-            {
-                MessageBox.Show("Обозначение не может быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (TargetTypeCB.Text == "")
-            {
-                MessageBox.Show("Необходимо выбрать тип мишени!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (SensorBlockсTB.Text == "")
-            {
-                MessageBox.Show("Необходимо указать номер блока датчиков!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (IndicationBlockTB.Text == "")
-            {
-                MessageBox.Show("Необходимо указать номер блока индикации!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (!OriginalSensorNomber(SensorBlockсTB.Text))
-            {
-                MessageBox.Show($"Блок датчиков № {SensorBlockсTB.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (((TargeLongTB.Text == "") && (TargeLatTB.Text != ""))|| ((TargeLongTB.Text!= "") && (TargeLatTB.Text == "")))
-            {
-                MessageBox.Show("Должны быть заполнены или обе координаты, или ни одной!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if ((TargeLongTB.Text == "") && (TargeLatTB.Text == ""))
-                App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), TargetTypeCB.SelectedIndex));
-            else
-            {
-                if (SLatNewRB.IsChecked == true) targetLat = Math.Abs(double.Parse(TargeLatTB.Text)) * (-1);
-                else targetLat = Math.Abs(double.Parse(TargeLatTB.Text));
-                if (WLonNewRB.IsChecked == true) targetLon = Math.Abs(double.Parse(TargeLongTB.Text)) * (-1);
-                else targetLon = Math.Abs(double.Parse(TargeLongTB.Text));
-                App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, TargetTypeCB.SelectedIndex));
-            }
+        //    if (TargenNameTB.Text == "")
+        //    {
+        //        MessageBox.Show("Обозначение не может быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
+        //    if (TargetTypeCB.Text == "")
+        //    {
+        //        MessageBox.Show("Необходимо выбрать тип мишени!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
+        //    if (SensorBlockсTB.Text == "")
+        //    {
+        //        MessageBox.Show("Необходимо указать номер блока датчиков!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
+        //    if (IndicationBlockTB.Text == "")
+        //    {
+        //        MessageBox.Show("Необходимо указать номер блока индикации!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
+        //    if (!OriginalSensorNomber(SensorBlockсTB.Text))
+        //    {
+        //        MessageBox.Show($"Блок датчиков № {SensorBlockсTB.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
+        //    if (((TargeLongTB.Text == "") && (TargeLatTB.Text != ""))|| ((TargeLongTB.Text!= "") && (TargeLatTB.Text == "")))
+        //    {
+        //        MessageBox.Show("Должны быть заполнены или обе координаты, или ни одной!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
+        //    if ((TargeLongTB.Text == "") && (TargeLatTB.Text == ""))
+        //        App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), TargetTypeCB.SelectedIndex));
+        //    else
+        //    {
+        //        if (SLatNewRB.IsChecked == true) targetLat = Math.Abs(double.Parse(TargeLatTB.Text)) * (-1);
+        //        else targetLat = Math.Abs(double.Parse(TargeLatTB.Text));
+        //        if (WLonNewRB.IsChecked == true) targetLon = Math.Abs(double.Parse(TargeLongTB.Text)) * (-1);
+        //        else targetLon = Math.Abs(double.Parse(TargeLongTB.Text));
+        //        App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, TargetTypeCB.SelectedIndex));
+           //}
            
             
-            TargetsDataGrid.ItemsSource = App.TargetList;
+        //    TargetsDataGrid.ItemsSource = App.TargetList;
 
         }
         
@@ -386,7 +386,8 @@ namespace Target_CNC_GC_08_04_20
                 {
                     if (editedTextbox.Text[0] == '-')
                     {
-                        string strTemp = editedTextbox.Text.Substring(1); if (!App.NomberMore0Double(strTemp))
+                        string strTemp = editedTextbox.Text.Substring(1); 
+                        if (!App.NomberMore0Double(strTemp))
                         {
                             MessageBox.Show("Некоректный ввод", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                             e.Cancel = true;

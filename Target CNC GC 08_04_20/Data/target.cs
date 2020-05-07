@@ -160,7 +160,31 @@ namespace Target_CNC_GC_08_04_20
             double angle = anglerad * 180.0 / Math.PI;
             return angle;
         }
-        public Target(string name, int nsb, int nib, int typrOfTarget)
+        //public Target(string name, int nsb, int nib, int typrOfTarget)
+        //{
+        //    NameTarget = name;
+        //    NomberSensorsBlock = nsb;
+        //    NomberIndicationBlock = nib;
+        //    Latitude = Field.startLatitude;
+        //    Longitude = Field.startLongitude;
+        //    TypeOfTarget = tupeOfTargetArray[typrOfTarget];
+            
+        //    Distance = Math.Round(DistanceCulc(Latitude, Longitude, Field.startLatitude, Field.startLongitude));
+        //    Angle = Math.Round(AngleField(Latitude, Longitude, Field.startLatitude, Field.startLongitude)- AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude),2);
+        //}
+        //public Target(string name, int nsb, int nib, double latitude, double longitude, int typrOfTarget)
+        //{
+        //    NameTarget = name;
+        //    NomberSensorsBlock = nsb;
+        //    NomberIndicationBlock = nib;
+        //    Latitude = latitude;
+        //    Longitude = longitude;
+        //    TypeOfTarget = tupeOfTargetArray[typrOfTarget];
+        //    Distance = Math.Round(DistanceCulc(Latitude, Longitude, App.startLatitude, Field.startLongitude));
+        //    Angle = Math.Round(AngleField(Latitude, Longitude, Field.startLatitude, Field.startLongitude) - AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude), 2);
+        //}
+
+        public Target(string name, int nsb, int nib, double startLat, double startLong, int typrOfTarget)
         {
             NameTarget = name;
             NomberSensorsBlock = nsb;
@@ -168,11 +192,12 @@ namespace Target_CNC_GC_08_04_20
             Latitude = Field.startLatitude;
             Longitude = Field.startLongitude;
             TypeOfTarget = tupeOfTargetArray[typrOfTarget];
-            
-            Distance = Math.Round(DistanceCulc(Latitude, Longitude, Field.startLatitude, Field.startLongitude));
-            Angle = Math.Round(AngleField(Latitude, Longitude, Field.startLatitude, Field.startLongitude)- AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude),2);
+
+            Distance = Math.Round(DistanceCulc(Latitude, Longitude, startLat, startLong));
+            Angle = Math.Round(AngleField(Latitude, Longitude, startLat, startLong) - AngleField(Field.nmpLat, Field.nmpLon, startLat, startLong), 2);
         }
-        public Target(string name, int nsb, int nib, double latitude, double longitude, int typrOfTarget)
+
+        public Target(string name, int nsb, int nib, double latitude, double longitude, double startLat, double startLong, int typrOfTarget)
         {
             NameTarget = name;
             NomberSensorsBlock = nsb;
@@ -180,10 +205,9 @@ namespace Target_CNC_GC_08_04_20
             Latitude = latitude;
             Longitude = longitude;
             TypeOfTarget = tupeOfTargetArray[typrOfTarget];
-            Distance = Math.Round(DistanceCulc(Latitude, Longitude, Field.startLatitude, Field.startLongitude));
-            Angle = Math.Round(AngleField(Latitude, Longitude, Field.startLatitude, Field.startLongitude) - AngleField(Field.nmpLat, Field.nmpLon, Field.startLatitude, Field.startLongitude), 2);
+            Distance = Math.Round(DistanceCulc(Latitude, Longitude, startLat, startLong));
+            Angle = Math.Round(AngleField(Latitude, Longitude, startLat, startLong) - AngleField(Field.nmpLat, Field.nmpLon, startLat, startLong), 2);
         }
-
 
         public static implicit operator Target(ObservableCollection<Target> v)
         {

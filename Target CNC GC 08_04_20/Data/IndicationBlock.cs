@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Target_CNC_GC_08_04_20.Data
 {
-    class IndicationBlock
+   public class IndicationBlock
     {
         private double voltage;
         private int voltageP;
