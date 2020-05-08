@@ -301,6 +301,7 @@ namespace Target_CNC_GC_08_04_20
             TypeShowsOfTargetDG.ItemsSource = Shows.arrayTypeShows;
             Shows.StartTimeRefresh();
             ShowsDG.ItemsSource = App.ShowsList;
+            AllTimeExerciseLB.Content = App.AllTimeExercise();
         }
 
         private int AlltimeBefor()
@@ -354,6 +355,8 @@ namespace Target_CNC_GC_08_04_20
                 ShowsDG.ItemsSource = App.ShowsList;
             }
             
+            AllTimeExerciseLB.Content= App.AllTimeExercise();
+
         }
 
         private void ShowsDG_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
@@ -636,6 +639,7 @@ namespace Target_CNC_GC_08_04_20
             }
             App.RefreshAllTargetName();
             TypeTargetOfShowDG.ItemsSource = App.AllTargetName;
+            AllTimeExerciseLB.Content = App.AllTimeExercise();
         }
 
         private void TargeLongTB_TextChanged(object sender, TextChangedEventArgs e)
@@ -768,21 +772,21 @@ namespace Target_CNC_GC_08_04_20
             
         }
 
+        //Удаление мишени
         private void TargetsDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {
-                var tar= TargetsDataGrid.SelectedItem as Target;
+               var tar= TargetsDataGrid.SelectedItem as Target; //Получаю выбранную запись в переменную tar как объект Target
                foreach (Shows sh in App.ShowsList)
                 {
                     if (sh.Target==tar.NameTarget)
                     {
-                        App.ShowsList.Remove(sh);
+                        MessageBox.Show("Данная мишень задействована в показах./n Исключите её из показаов прежде чем удалять", "Внимание!");
+                        e.Handled = true;
                     }
                 }
-                Shows.StartTimeRefresh();
-                ShowsDG.ItemsSource = null;
-                ShowsDG.ItemsSource = App.ShowsList;
+         
             }
         }
 
@@ -792,6 +796,7 @@ namespace Target_CNC_GC_08_04_20
 
             if (e.Key == Key.Delete) 
             {
+                
                 string nameUploadFile = "Exercise/" + App.exerciseActiv.Name + ".txt";
                
                 File.Delete(nameUploadFile);
@@ -853,6 +858,19 @@ namespace Target_CNC_GC_08_04_20
         {
             
             
+        }
+
+        private void ShowsDG_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                AllTimeExerciseLB.Content = App.AllTimeExercise();
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void TargetsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -987,6 +1005,7 @@ namespace Target_CNC_GC_08_04_20
 
             }
         }
+        
     }
     
 

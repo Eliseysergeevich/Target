@@ -196,6 +196,16 @@ namespace Target_CNC_GC_08_04_20
             }
         }
 
+        public static int AllTimeExercise()
+        {
+            int sum=0;
+            foreach(Shows sh in ShowsList)
+            {
+                sum += sh.PreTimeSec + sh.ShowTimeSec;
+            }
+            return sum;
+        }
+
     }
 
 }
