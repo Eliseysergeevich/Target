@@ -24,6 +24,7 @@ namespace Target_CNC_GC_08_04_20.Data
         public  double StartLongitude { get; set; }// = 38.04094; Долгота рубежа
 
         public string Description { get; set; }//Описание к упражнению
+        public bool IsActiv { get; set; }
 
         public Exercise(string name, string st)
         {
@@ -32,6 +33,7 @@ namespace Target_CNC_GC_08_04_20.Data
             StartLongitude = 37.617734;
             if (st == "") Description = "Без описания"; 
             else Description = st;
+            AllTime = App.AllTimeExercise(false);
         }
         public Exercise(string name,double latitude, double longitude, string st)
         {
@@ -40,6 +42,7 @@ namespace Target_CNC_GC_08_04_20.Data
             StartLongitude = longitude;
             if (st == "") Description = "Без описания";
             else Description = st;
+            AllTime = App.AllTimeExercise(false);
         }
     }
 }

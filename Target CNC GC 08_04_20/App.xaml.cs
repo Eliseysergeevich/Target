@@ -21,14 +21,22 @@ namespace Target_CNC_GC_08_04_20
         public static double NmpLat { get; set; }// = 86.391;
         public static double NmpLon { get; set; }
         public static bool q;
+        public static ObservableCollection<int> allScvodList = new ObservableCollection<int> { };
+        public static ObservableCollection<Person> PersonList = new ObservableCollection<Person> { };
         public static ObservableCollection<Exercise> ExerciseList = new ObservableCollection<Exercise> { }; //Коллекция упражнений
-        public static ObservableCollection<Target> TargetList = new ObservableCollection<Target> { };//Коллекция мишеней в упражнении
+        public static ObservableCollection<Target> TargetList = new ObservableCollection<Target> { };//Коллекция мишеней в упражнении при настроеке
         public static ObservableCollection<Sensors> SensorsList = new ObservableCollection<Sensors> { }; //Коллекция блоков датчиков
         public static ObservableCollection<IndicationBlock> IndicationList = new ObservableCollection<IndicationBlock> { }; //Коллекция блоков индикации
-        public static ObservableCollection<Shows> ShowsList = new ObservableCollection<Shows> { }; //Коллекция показов
-        public static List<string> AllTargetName = new List<string>();
+        public static ObservableCollection<Shows> ShowsList = new ObservableCollection<Shows> { }; //Коллекция показов при настройке
 
-        public static Exercise exerciseActiv;
+        public static ObservableCollection<Target> TargetPlayList = new ObservableCollection<Target> { };//Коллекция мишеней в упражнении при выполнении
+        public static ObservableCollection<Shows> ShowsPlayList = new ObservableCollection<Shows> { }; //Коллекция показов при показ при выполнении
+
+        public static List<string> AllTargetName = new List<string>();
+        public static List<string> AllExerciseName = new List<string>();
+        public static List<int> PersonInScvod = new List<int>();
+
+        public static Exercise exerciseActiv, exercisePlay;
         public static bool NomberMore0Int(string st)
         {
             string inputString = st;
@@ -91,6 +99,36 @@ namespace Target_CNC_GC_08_04_20
                         else if (words.Length == 4) App.TargetList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), startLat, startLong, int.Parse(words[3])));
                         if (words.Length == 5)
                             App.ShowsList.Add(new Shows(int.Parse(words[0]), words[1], words[2], int.Parse(words[3]), int.Parse(words[4])));
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Файл с данными о мишенях не обнаружен. \nОн будет создан автоматически.", "Внимание!");
+                File.Create(path).Close();
+            }
+        }
+
+        public static void LoadTargetForPlay(string name, double startLat, double startLong)
+        {
+            string path = @name;
+            if (File.Exists(path))
+            {
+                using (StreamReader st = new StreamReader(path, System.Text.Encoding.Default))
+                {
+
+                    string line;
+                    TargetPlayList.Clear();
+                    ShowsPlayList.Clear();
+                    while ((line = st.ReadLine()) != null)
+                    {
+                        line = line.Trim();
+                        string[] words = line.Split(new char[] { ' ' });
+                        if (words.Length == 6)
+                            App.TargetPlayList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), double.Parse(words[3]), double.Parse(words[4]), startLat, startLong, int.Parse(words[5])));
+                        else if (words.Length == 4) App.TargetPlayList.Add(new Target(words[0], int.Parse(words[1]), int.Parse(words[2]), startLat, startLong, int.Parse(words[3])));
+                        if (words.Length == 5)
+                            App.ShowsPlayList.Add(new Shows(int.Parse(words[0]), words[1], words[2], int.Parse(words[3]), int.Parse(words[4])));
                     }
                 }
             }
@@ -196,15 +234,33 @@ namespace Target_CNC_GC_08_04_20
             }
         }
 
-        public static int AllTimeExercise()
+        public static int AllTimeExercise(bool play)
         {
             int sum=0;
+            if (!play)
             foreach(Shows sh in ShowsList)
             {
                 sum += sh.PreTimeSec + sh.ShowTimeSec;
             }
+            else
+                foreach (Shows sh in ShowsPlayList)
+                {
+                    sum += sh.PreTimeSec + sh.ShowTimeSec;
+                }
+
             return sum;
         }
+
+        public static void ExerciseListUbdate()
+        {
+            AllExerciseName.Clear();
+           for (int i=0; i<ExerciseList.Count; i++)
+            {
+                AllExerciseName.Add(ExerciseList[i].Name);
+            }
+                      
+        }
+        
 
     }
 

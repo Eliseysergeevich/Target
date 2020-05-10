@@ -9,22 +9,9 @@
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
         MinHeight="450" MinWidth="800"
-        Title="Target CNC GC" Height="750" Width="1200" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="Target CNC GC" Height="750" Width="1200" Closing="Window_Closing" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
     <Window.Resources>
-        <ControlTemplate TargetType="Button" x:Key="btTemplate">
-            <Border CornerRadius="1750" BorderThickness="2"
-                     Height="300" Width="300" BorderBrush="#FF009900" >
-                <Border.Background>
-                    <RadialGradientBrush>
-                        <GradientStop Color="#FFFBF5F5" Offset="1"/>
-                        <GradientStop Color="#FF0C9C0C" Offset="0.826"/>
-                    </RadialGradientBrush>
-                </Border.Background>
-                <ContentControl  Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"    TextOptions.TextHintingMode="Fixed">
-                    <Image Source="Z:\Цель\WPF\Target CNC GC 08_04_20\Target CNC GC 08_04_20\Imag\target_PNG17.png"/>
-                </ContentControl>
-            </Border>
-        </ControlTemplate>
+
         <col:ArrayList x:Key="TargetListRes">
             <StackPanel Orientation="Horizontal" TextSearch.Text="Гонг 200">
                 <Image Width="50" Source="Imag\200.png"/>
@@ -81,38 +68,10 @@
                     <GradientStop Color="White" Offset="1" />
                 </LinearGradientBrush>
             </StackPanel.Background>
-            <Button x:Name="situation"  Content="Обстановка" Click="situation_Click">
-                <Button.Background>
-                    <LinearGradientBrush StartPoint="0,0.9">
-                        <GradientStop Color="Firebrick" Offset="0.868"/>
-                        <GradientStop Color="White" Offset="1"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Exercise"  Content="Конструктор">
-                <Button.Background>
-                    <LinearGradientBrush StartPoint="0,0.9">
-                        <GradientStop Color="Firebrick" Offset="0.868"/>
-                        <GradientStop Color="White" Offset="1"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Person"  Content="Участники" Click="Person_Click">
-                <Button.Background>
-                    <LinearGradientBrush StartPoint="0,0.9">
-                        <GradientStop Color="Firebrick" Offset="0.868"/>
-                        <GradientStop Color="White" Offset="1"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Competitions"  Content="Соревнование" >
-                <Button.Background>
-                    <LinearGradientBrush StartPoint="0,0.9">
-                        <GradientStop Color="Firebrick" Offset="0.868"/>
-                        <GradientStop Color="White" Offset="1"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
+            <Image Source="Imag\23КЦУА.png" Width="150" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1"/>
+
+
+
 
         </StackPanel>
         <Grid x:Name="Grid1" Grid.Column="1" Visibility="Visible">
@@ -130,7 +89,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Image Source="Imag\23КЦУА.png" Width="150" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1"/>
+
             <Grid Name="WorkPlace" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -138,20 +97,20 @@
                     <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
                 <TabControl SelectionChanged="TabControl_SelectionChanged"  Foreground="#FFF9EDED" Background="#FFFBF8F8">
-                    <TabItem Header="Упражнение">
+                    <TabItem Header="Упражнение" >
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition MinHeight="200"/>
+                                <RowDefinition MinHeight="500"/>
                                 <RowDefinition Height="auto"/>
-                                <RowDefinition MinHeight="200"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="400"/>
                                 </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="0">
+                                <Grid Grid.Column="0" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
@@ -163,13 +122,13 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <GroupBox Header="Упражнение" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-                                        <ComboBox x:Name="ExerciseNameForPlayCB" Height="30" FontSize="24" FontWeight="Bold"/>
+                                        <ComboBox x:Name="ExerciseNameForPlayCB" Height="30" FontSize="24" FontWeight="Bold" DropDownOpened="ExerciseNameForPlayCB_DropDownOpened" SelectionChanged="ExerciseNameForPlayCB_SelectionChanged_1" DropDownClosed="ExerciseNameForPlayCB_DropDownClosed"  />
                                     </GroupBox>
                                     <GroupBox Header="Сквод" Grid.Row="1" Grid.Column="0">
-                                        <ComboBox x:Name="ScvodNomberForPlayCB" Height="30" FontWeight="Bold" FontSize="20"/>
+                                        <ComboBox x:Name="ScvodNomberForPlayCB" Height="30" FontWeight="Bold" FontSize="20" DropDownOpened="ScvodNomberForPlayCB_DropDownOpened"/>
                                     </GroupBox>
                                     <GroupBox Header="Номер участника" Grid.Row="1" Grid.Column="1">
-                                        <ComboBox x:Name="PersonNomberForPlayCB" Height="30" FontSize="30" FontStyle="Italic" Foreground="#FFFF0D0D"/>
+                                        <ComboBox x:Name="PersonNomberForPlayCB" Height="30" FontSize="30" FontStyle="Italic" Foreground="#FFFF0D0D" DropDownOpened="PersonNomberForPlayCB_DropDownOpened" FontWeight="Bold" FontFamily="Georgia"/>
                                     </GroupBox>
                                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                                         <Label Content="Время упражнения - " FontSize="18"/>
@@ -177,7 +136,7 @@
                                         <Label Content="сек" FontSize="18"/>
                                     </StackPanel>
                                     <GroupBox Header="Описание упражнения" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                                        <TextBox x:Name="AboutExercisePlayTB" TextWrapping="Wrap" IsReadOnly="True" Width="auto" Height="auto"/>
+                                        <TextBox x:Name="AboutExercisePlayTB" TextWrapping="Wrap" IsReadOnly="True" Width="auto" Height="auto" />
                                     </GroupBox>
                                 </Grid>
                                 <Grid Grid.Row="0" Grid.Column="1">
@@ -192,12 +151,18 @@
                                                 <RowDefinition/>
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
-                                            <Label Content="Начало упражнения - " Grid.Row="0"/>
-                                            <DataGrid x:Name="ProgressExerciseDG" Grid.Row="1">
+                                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                                <Label Content="Начало упражнения - "/>
+                                                <TextBlock x:Name="startTime"/>
+                                            </StackPanel>
+
+                                            <DataGrid x:Name="ProgressExerciseDG" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Показ №"/>
-                                                    <DataGridTextColumn Header="Результат"/>
-                                                    <DataGridTextColumn Header="Время"/>
+                                                    <DataGridTextColumn Header="Показ №" Binding="{Binding Path=Serial}"/>
+                                                    <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}"/>
+                                                    <DataGridTextColumn Header="Мишень" Binding="{Binding Path=Target}"/>
+                                                    <DataGridTextColumn Header="Результат" Binding="{Binding Path=Struck}"/>
+                                                    <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                             <GroupBox Header="Комментарий" Grid.Row="2">
@@ -210,39 +175,28 @@
                                             <ColumnDefinition Width="2*"/>
                                             <ColumnDefinition Width="1*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Button x:Name="SaveResoultPlayBut" Content="Сохранить результат" Width="auto" Height="35" VerticalAlignment="Bottom" Grid.Column="0"/>
+                                        <Button x:Name="SaveResoultPlayBut" Content="Сохранить результат" Width="auto" Height="35" VerticalAlignment="Bottom" Grid.Column="0" Click="SaveResoultPlayBut_Click">
+                                        </Button>
                                         <Button x:Name="ResetResoultPlayBut" Content="Сбросить" Width="auto" VerticalAlignment="Bottom" Grid.Column="1"/>
                                     </Grid>
                                 </Grid>
                                 <Grid Grid.Column="2">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="400"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <Button  x:Name="SartBut"  Width="300" Height="300" Click="Button_Click" >
-                                        <Button.Template>
-                                            <ControlTemplate>
-                                                <Grid x:Name="controlLayout">
-                                                    <Ellipse x:Name="buttonSurface" Stroke="#FF239900">
-                                                        <Ellipse.Fill>
-                                                            <RadialGradientBrush>
-                                                                <GradientStop Color="White" Offset="1"/>
-                                                                <GradientStop Color="#FF009900" Offset="0.843"/>
-                                                            </RadialGradientBrush>
-                                                        </Ellipse.Fill>
-                                                    </Ellipse>
-                                                    <Label x:Name="buttonCaption" VerticalAlignment="Center"
-						       HorizontalAlignment="Center"
-							   FontWeight="Bold" FontSize="48" Content="СТАРТ!" Background="#00000000" Foreground="White"></Label>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Button.Template>
+                                    <Button  x:Name="SartBut" Template="{DynamicResource RoundButtonTemplate}" Width="auto" Height="auto" Click="Button_Click" >
+
                                     </Button>
-                                    <Button x:Name="StopPlayBut" Grid.Row="1" Width="300" Content="СТОП"/>
+                                    <Button x:Name="StopPlayBut" Template="{StaticResource StopButtonTemplate}" Grid.Row="1" Height="auto" Width="auto" Content="СТОП" BorderBrush="{x:Null}" Foreground="{x:Null}"/>
                                 </Grid>
                             </Grid>
-                            <GridSplitter Grid.Row="1" ShowsPreview="False" Height="3"  HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                            <ProgressBar x:Name="TimeNow" Grid.Row="2" MinHeight="100"/>
+                            <GridSplitter Grid.Row="1" ShowsPreview="False" Height="3"  HorizontalAlignment="Stretch" />
+                            <ProgressBar x:Name="TimeNow" Grid.Row="2" Margin="150,0,0,0"/>
+                            <Canvas x:Name="Gant" Grid.Row="2">
+
+
+                            </Canvas>
                         </Grid>
 
                     </TabItem>
@@ -559,11 +513,10 @@
                     <TabItem Header="Монитор сети">
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="110*"/>
-                                <ColumnDefinition Width="203*"/>
-                                <ColumnDefinition Width="313*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="2">
+                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="3">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
                                     <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
@@ -596,7 +549,7 @@
                                     <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <DataGrid x:Name="indicationDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="2">
+                            <DataGrid x:Name="indicationDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="3">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
                                     <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
@@ -617,29 +570,129 @@
                             </DataGrid>
                         </Grid>
                     </TabItem>
+                    <TabItem Header="Участники">
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="7*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <GroupBox Grid.Column="0" Header="Добвление участника" HorizontalAlignment="Left"  FontSize="14">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <Button x:Name="addPersonBut" Grid.Column="2" Margin="2" Content="Добавить"  Width="120" MouseLeftButtonDown="addPersonBut_MouseLeftButtonDown" Click="addPersonBut_Click" >
+                                            <Button.Background>
+                                                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                                    <GradientStop Color="Firebrick" Offset="0.75"/>
+                                                    <GradientStop Color="White" Offset="0.966"/>
+                                                </LinearGradientBrush>
+                                            </Button.Background>
+                                        </Button>
+                                        <TextBox x:Name="nomberPeorsonTB"  Text="Номер..."  Width="70" GotFocus="nomberPeorsonTB_GotFocus" LostFocus="nomberPeorsonTB_LostFocus" TextChanged="nomberPeorsonTB_TextChanged"/>
+                                        <ComboBox x:Name="scvodCB"  FontSize="16"  Width="60" Text="Сквод.." Height="30" >
+                                            <ComboBox.BorderBrush>
+                                                <RadialGradientBrush>
+                                                    <GradientStop Color="Black" Offset="1"/>
+                                                    <GradientStop Color="White"/>
+                                                </RadialGradientBrush>
+                                            </ComboBox.BorderBrush>
+                                            <ComboBox.Background>
+                                                <ImageBrush ImageSource="Imag/23КЦУА.png"/>
+                                            </ComboBox.Background>
+                                        </ComboBox>
+                                        <TextBox x:Name="personNameTB" Text="Имя..."  Width="150" GotFocus="personNameTB_GotFocus" LostFocus="personNameTB_LostFocus" />
+                                        <TextBox x:Name="personFamTB" Text="Фамилия..."  Width="150" GotFocus="personFamTB_GotFocus" LostFocus="personFamTB_LostFocus" />
+                                        <TextBox x:Name="midddleNameTB" Text="Отчество..."  Width="150" GotFocus="midddleNameTB_GotFocus" LostFocus="midddleNameTB_LostFocus"/>
+                                    </StackPanel>
+
+                                </GroupBox>
+                                <GroupBox Grid.Column="1" Header="Всего скводов" HorizontalAlignment="Right" FontSize="14">
+                                    <TextBox x:Name="allScvodTextBox" Foreground="Black" FontStyle="Normal" TextAlignment="Center"
+                         TextChanged="allScvodTextBox_TextChanged" GotFocus="allScvodTextBox_GotFocus" LostFocus="allScvodTextBox_LostFocus">
+
+                                    </TextBox>
+
+                                </GroupBox>
+
+                            </Grid>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Таблица результатов" FontSize="24" FontFamily="Arial" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Italic">
+                                <TextBlock.Foreground>
+                                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFF70D0D" Offset="0.265"/>
+                                        <GradientStop Color="White"/>
+                                        <GradientStop Color="#FFFBF5F5" Offset="1"/>
+                                        <GradientStop Color="#FFF73D3D" Offset="0.791"/>
+                                    </LinearGradientBrush>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <Grid Grid.Column="1" Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="35"/>
+                                </Grid.RowDefinitions>
+                                <DataGrid Grid.Row="0" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Место"/>
+                                        <DataGridTextColumn Header="Участник"/>
+                                        <DataGridTextColumn Header="Очки"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                            <Grid Grid.Row="1" >
+
+                                <DataGrid x:Name="personLB"  Width="860" Margin="5" ColumnWidth="20" AutoGenerateColumns="False" FontSize="16" HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto">
+
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Номер" Binding= "{Binding Path=Nomber}" Width="85"/>
+                                        <DataGridTextColumn Header="Сквод" Binding= "{Binding Path=Scvod}" Width="85"/>
+                                        <DataGridTextColumn Header="Имя" Binding= "{Binding Path=Name}" Width="230"/>
+                                        <DataGridTextColumn Header="Фамилия" Binding= "{Binding Path=Fam}" Width="230"/>
+                                        <DataGridTextColumn Header="Отчество" Binding= "{Binding Path=MiddleName}" Width="230"/>
+
+                                    </DataGrid.Columns>
+
+
+                                </DataGrid>
+
+                            </Grid>
+
+
+
+
+
+
+                        </Grid>
+                    </TabItem>
 
 
                 </TabControl>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" >
-                    <ComboBox Name="portsCB" Width="100" Height="25" HorizontalAlignment="Left" Margin="10,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}"/>
-                    <Button x:Name="conectBT" Content="Подключить"  Grid.Row="1" Click="conectBT_Click">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                                <GradientStop Color="Firebrick" Offset="0.2"/>
-                                <GradientStop Color="White"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <Button x:Name="disConectBT" Content="Отключить"  Grid.Row="1" Click="disConectBT_Click">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                                <GradientStop Color="Firebrick" Offset="0.271"/>
-                                <GradientStop Color="White"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+
                     <TextBlock x:Name="dataSerialTB" Width="150" Text="{Binding Path=RealTime100ms}" />
+                    <Button x:Name="situation"  Content="Обстановка" Click="situation_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0.9">
+                                <GradientStop Color="Firebrick" Offset="0.868"/>
+                                <GradientStop Color="White" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="PersonBut"  Content="Участники" Click="Person_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0.9">
+                                <GradientStop Color="Firebrick" Offset="0.868"/>
+                                <GradientStop Color="White" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </StackPanel>
 
             </Grid>
@@ -651,15 +704,36 @@
 
 
 
+        <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Bottom">
+            <Button x:Name="conectBT" Content="Подключить"  Grid.Row="1" Click="conectBT_Click">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="Firebrick" Offset="0.2"/>
+                        <GradientStop Color="White"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="disConectBT" Content="Отключить"  Grid.Row="1" Click="disConectBT_Click">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="Firebrick" Offset="0.271"/>
+                        <GradientStop Color="White"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <ComboBox Name="portsCB" Width="150" Height="25" HorizontalAlignment="Left" Margin="5,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}"/>
 
-        <Button x:Name="Setings"  Content="Настройки" VerticalAlignment="Bottom" Click="Setings_Click">
-            <Button.Background>
-                <LinearGradientBrush StartPoint="0,0.9" EndPoint="1,1">
-                    <GradientStop Color="Firebrick" Offset="0.911"/>
-                    <GradientStop Color="White" Offset="0.971"/>
-                </LinearGradientBrush>
-            </Button.Background>
-        </Button>
+            <Button x:Name="Setings"  Content="Настройки" VerticalAlignment="Bottom" Click="Setings_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0.9" EndPoint="1,1">
+                        <GradientStop Color="Firebrick" Offset="0.911"/>
+                        <GradientStop Color="White" Offset="0.971"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+
+        </StackPanel>
+
 
     </Grid>
 </Window>

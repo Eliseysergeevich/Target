@@ -21,14 +21,15 @@ using Target_CNC_GC_08_04_20.Data;
 
 namespace Target_CNC_GC_08_04_20
 {
-   
+
     public partial class MainWindow : Window
     {
-        
+
         SerialPort ArduinoPort = new SerialPort();//Создаём последовательный порт 
         private delegate void updateDelegate(string txt);
-        
+
        
+
         public int count;
         //Exercise exercise = new Exercise();
         Random rnd = new Random(50);
@@ -41,23 +42,34 @@ namespace Target_CNC_GC_08_04_20
         private string nameBeforChange;
         
 
+
         public MainWindow()
         {
             InitializeComponent();
+             //Создание и параметризация таймера
+         DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
+        timer.Tick += new EventHandler(timer_Tick);
+        timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        timer.Start();
 
             //exercise.RealTime100ms = 0;
 
             //App.LoadTarget();//Формирование коллекции мишеней при запуске программы
 
-           
-        } 
-        
+
+        }
+
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            //exercise.RealTime100ms++;
-            //TimeNow.Value = exercise.RealTime100ms;
-            //// dataSerialTB.Text = exercise.RealTime100ms.ToString();
+            if ((App.exercisePlay!=null) &&(App.exercisePlay.IsActiv == true))
+            {
+            App.exercisePlay.RealTime100ms++;
+            TimeNow.Value = App.exercisePlay.RealTime100ms;
+                if (TimeNow.Value >= (App.exercisePlay.AllTime*10)) App.exercisePlay.IsActiv = false;
+            }
+            
+            // dataSerialTB.Text = exercise.RealTime100ms.ToString();
             //if (count == 100) count = 0;
             //if (exercise.RealTime100ms == 100) exercise.RealTime100ms = 0;
         }
@@ -65,7 +77,7 @@ namespace Target_CNC_GC_08_04_20
 
         private void timerCOM_Tick(object sender, EventArgs e)
         {
-          
+
         }
 
         //Чтение данных с COM порта
@@ -145,13 +157,13 @@ namespace Target_CNC_GC_08_04_20
             TargetEnvironment.Show();
         }
 
-   
+
         private void Setings_Click(object sender, RoutedEventArgs e)
         {
             Window1 window1 = new Window1();
             window1.Show();
         }
-       
+
 
         //Random rnd1 = new Random(50);
 
@@ -178,7 +190,7 @@ namespace Target_CNC_GC_08_04_20
                 App.q = true;
             }
         }
-        
+
         //Соединение с COM портом
         private void conectBT_Click(object sender, RoutedEventArgs e)
         {
@@ -201,7 +213,7 @@ namespace Target_CNC_GC_08_04_20
             else MessageBox.Show("Порт не выбран");
 
         }
-        
+
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             if (ArduinoPort.IsOpen)
@@ -250,8 +262,8 @@ namespace Target_CNC_GC_08_04_20
             string settingsNameFile = @"Settings.txt";
             using (StreamWriter st = new StreamWriter(settingsNameFile, false, System.Text.Encoding.UTF8))
             {
-                
-                string str = App.NmpLat+" "+App.NmpLon;
+
+                string str = App.NmpLat + " " + App.NmpLon;
                 st.WriteLine(str);
             }
             string ExerciseNameFile = @"ExerciseName.txt";
@@ -275,6 +287,20 @@ namespace Target_CNC_GC_08_04_20
                 string nameUploadFile = "Exercise/" + App.exerciseActiv.Name + ".txt";
                 App.UploadTarget(nameUploadFile);
             }
+            string path = @"Person.txt";
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                File.Create(path).Close();
+
+            }
+            foreach (Person man in App.PersonList)
+                using (StreamWriter st = new StreamWriter(path, true, System.Text.Encoding.UTF8))
+                {
+                    string str = man.Nomber.ToString() + " " + man.Scvod.ToString() + " " + man.Name + " " + man.Fam + " " + man.MiddleName;
+                    st.WriteLine(str);
+                }
         }
 
         //Добавление показа
@@ -297,11 +323,12 @@ namespace Target_CNC_GC_08_04_20
                 startTimeTemp = AlltimeBefor();
             }
             App.ShowsList.Add(new Shows(serialTemp, targetTemp, type, preTimeTemp, showTimeTemp));
-            
+
             TypeShowsOfTargetDG.ItemsSource = Shows.arrayTypeShows;
-            Shows.StartTimeRefresh();
+            Shows.StartTimeRefresh(false);
             ShowsDG.ItemsSource = App.ShowsList;
-            AllTimeExerciseLB.Content = App.AllTimeExercise();
+            AllTimeExerciseLB.Content = App.AllTimeExercise(false);
+            
         }
 
         private int AlltimeBefor()
@@ -316,12 +343,19 @@ namespace Target_CNC_GC_08_04_20
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            if (SettingsExercise.IsSelected == false)
+            {
+                if (App.exerciseActiv != null)
+                {
+                    string nameUploadFile = "Exercise/" + App.exerciseActiv.Name + ".txt";
+                    App.UploadTarget(nameUploadFile);
+                }
+            }
         }
 
         private void ShowsDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            
+
             if (e.Column.DisplayIndex == 3)
             {
                 var editedTextbox = e.EditingElement as TextBox;
@@ -333,7 +367,7 @@ namespace Target_CNC_GC_08_04_20
                 }
                 var sh = e.Row.Item as Shows;
                 sh.PreTimeSec = int.Parse(editedTextbox.Text);
-                Shows.StartTimeRefresh();
+                Shows.StartTimeRefresh(false);
                 ShowsDG.ItemsSource = null;
                 ShowsDG.ItemsSource = App.ShowsList;
 
@@ -350,13 +384,13 @@ namespace Target_CNC_GC_08_04_20
                 }
                 var sh = e.Row.Item as Shows;
                 sh.ShowTimeSec = int.Parse(editedTextbox.Text);
-                Shows.StartTimeRefresh();
+                Shows.StartTimeRefresh(false);
                 ShowsDG.ItemsSource = null;
                 ShowsDG.ItemsSource = App.ShowsList;
             }
-            
-            AllTimeExerciseLB.Content= App.AllTimeExercise();
 
+            AllTimeExerciseLB.Content = App.AllTimeExercise(false);
+            
         }
 
         private void ShowsDG_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
@@ -371,8 +405,8 @@ namespace Target_CNC_GC_08_04_20
                         if (sh.Serial == temp.Serial + 1)
                         {
                             sh.Serial = temp.Serial;
-                            sh.StartTime -= temp.PreTimeSec+temp.ShowTimeSec;
-                            temp.StartTime+= sh.PreTimeSec + sh.ShowTimeSec;
+                            sh.StartTime -= temp.PreTimeSec + temp.ShowTimeSec;
+                            temp.StartTime += sh.PreTimeSec + sh.ShowTimeSec;
                         }
                     }
                     temp.Serial++;
@@ -383,7 +417,7 @@ namespace Target_CNC_GC_08_04_20
             if (e.Column.DisplayIndex == 7)
             {
                 var temp = e.Row.Item as Shows;
-                if (temp.Serial>1)
+                if (temp.Serial > 1)
                 {
                     foreach (Shows sh in App.ShowsList)
                     {
@@ -399,13 +433,13 @@ namespace Target_CNC_GC_08_04_20
                 ShowsDG.ItemsSource = null;
                 ShowsDG.ItemsSource = App.ShowsList;
             }
-           
+
         }
 
         private void up_Click(object sender, RoutedEventArgs e)
         {
-            
-           
+
+
         }
 
         private void down_Click(object sender, RoutedEventArgs e)
@@ -432,7 +466,7 @@ namespace Target_CNC_GC_08_04_20
                 return;
 
             }
-            if (((startLatitudeTB.Text!="")&&(startLongitudeTB.Text==""))|| ((startLatitudeTB.Text == "") && (startLongitudeTB.Text != "")))
+            if (((startLatitudeTB.Text != "") && (startLongitudeTB.Text == "")) || ((startLatitudeTB.Text == "") && (startLongitudeTB.Text != "")))
             {
                 MessageBox.Show("Должны быть заполнены или обе координаты, или ни одной!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -446,27 +480,27 @@ namespace Target_CNC_GC_08_04_20
                 if (wlRB.IsChecked == true) longitudeTemp = Math.Abs(double.Parse(startLongitudeTB.Text)) * (-1);
                 else longitudeTemp = Math.Abs(double.Parse(startLongitudeTB.Text));
                 App.ExerciseList.Add(new Exercise(tempName, latitudeTemp, longitudeTemp, AboutExerciseTB.Text));
-                
+
             }
-            ExerciseDG.ItemsSource = App.ExerciseList;          
+            ExerciseDG.ItemsSource = App.ExerciseList;
 
             //Добавление нового упражнения в файл
             string exerciseNameFile = @"ExerciseName.txt";
             using (StreamWriter st = new StreamWriter(exerciseNameFile, true, System.Text.Encoding.UTF8))
             {
 
-                string str = tempName+" "+ App.ExerciseList[App.ExerciseList.Count-1].StartLatitude + " "+ App.ExerciseList[App.ExerciseList.Count - 1].StartLongitude + " "+ AboutExerciseTB.Text;
+                string str = tempName + " " + App.ExerciseList[App.ExerciseList.Count - 1].StartLatitude + " " + App.ExerciseList[App.ExerciseList.Count - 1].StartLongitude + " " + AboutExerciseTB.Text;
 
                 st.WriteLine(str);
             }
-            
+
             ExerciseNameTB.Text = "";
             startLatitudeTB.Text = "";
             startLongitudeTB.Text = "";
             AboutExerciseTB.Text = "";
             try
             {
-                string exerciseName= "Exercise/"+tempName+".txt";
+                string exerciseName = "Exercise/" + tempName + ".txt";
                 string exerciseNamefile = @exerciseName;
                 File.Create(exerciseNamefile).Close();
 
@@ -475,6 +509,8 @@ namespace Target_CNC_GC_08_04_20
             {
                 MessageBox.Show("Не получилось создать файл");
             }
+            App.ExerciseListUbdate();
+
         }
 
         private bool OriginalNameExercise(string newName)//Проверка на оригинальность обозначение мишени
@@ -500,12 +536,9 @@ namespace Target_CNC_GC_08_04_20
             string[] ports = SerialPort.GetPortNames();
             portsCB.ItemsSource = ports;
 
-            //Создание и параметризация таймера
-            DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            timer.Start();
-       
+            
+            
+
             //Выгрузка координат Северное магнитного полюса
             string settingsFileName = @"Settings.txt";
             using (StreamReader st = new StreamReader(settingsFileName, System.Text.Encoding.UTF8))
@@ -543,7 +576,28 @@ namespace Target_CNC_GC_08_04_20
                     }
                 }
             }
+            
+            
+            scvodCB.ItemsSource = App.allScvodList;
+            App.PersonList.Clear();
+            string PersonFile = @"Person.txt";
+            using (StreamReader st = new StreamReader(PersonFile, System.Text.Encoding.Default))
+            {
+                string line;
 
+                while ((line = st.ReadLine()) != null)
+                {
+                    line = line.Trim();
+                    string[] words = line.Split(new char[] { ' ' });
+                    if (words.Length == 5)
+                    {
+                        App.PersonList.Add(new Person(int.Parse(words[0]), int.Parse(words[1]), words[2], words[3], words[4]));
+                    }
+
+                }
+                personLB.ItemsSource = App.PersonList;
+            }
+            allScvodTextBox.Text = Person.MaxScvod().ToString();
         }
 
         private void TargenNameTB_TextChanged(object sender, TextChangedEventArgs e)
@@ -603,13 +657,13 @@ namespace Target_CNC_GC_08_04_20
         {
             if ((TargeLatTB.Text != "") && (TargeLongTB.Text != ""))
             {
-                double targetLatitude, targetLongitude;              
+                double targetLatitude, targetLongitude;
                 var ex = ExerciseDG.SelectedItem as Exercise;
                 double startLatitude = ex.StartLatitude;
                 double startLongitude = ex.StartLongitude;
-                if (NLatNewRB.IsChecked == true) targetLatitude = double.Parse(TargeLatTB.Text); 
+                if (NLatNewRB.IsChecked == true) targetLatitude = double.Parse(TargeLatTB.Text);
                 else targetLatitude = double.Parse(TargeLatTB.Text) * (-1);
-                if (ELonNewRB.IsChecked == true) targetLongitude = double.Parse(TargeLongTB.Text); 
+                if (ELonNewRB.IsChecked == true) targetLongitude = double.Parse(TargeLongTB.Text);
                 else targetLongitude = double.Parse(TargeLongTB.Text) * (-1);
                 DistanceTB.Text = Math.Round(App.DistanceCulc(targetLatitude, targetLongitude, startLatitude, startLongitude)).ToString();
                 AngleTB.Text = Math.Round((App.AngleField(targetLatitude, targetLongitude, startLatitude, startLongitude) - App.AngleField(Field.nmpLat, Field.nmpLon, startLatitude, startLongitude)), 2).ToString();
@@ -618,29 +672,33 @@ namespace Target_CNC_GC_08_04_20
 
         private void ExerciseDG_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (App.exerciseActiv!=null)
+            if (App.exerciseActiv != null)
             {
                 string nameUploadFile = "Exercise/" + App.exerciseActiv.Name + ".txt";
                 App.UploadTarget(nameUploadFile);
             }
-            App.ShowsList.Clear();        
+
+            App.ShowsList.Clear();
             var ex = ExerciseDG.SelectedItem as Exercise;
             App.exerciseActiv = ex;
+
             if (ex != null)
             {
                 ExerciseSelectName.Text = ex.Name;
                 DistanceCalculete();
                 string nameLoadFile = "Exercise/" + App.exerciseActiv.Name + ".txt";
                 App.LoadTarget(nameLoadFile, ex.StartLatitude, ex.StartLongitude);
-                Shows.StartTimeRefresh();
+                Shows.StartTimeRefresh(false);
                 TargetsDataGrid.ItemsSource = null;
                 TargetsDataGrid.ItemsSource = App.TargetList;
                 ShowsDG.ItemsSource = App.ShowsList;
             }
             App.RefreshAllTargetName();
             TypeTargetOfShowDG.ItemsSource = App.AllTargetName;
-            AllTimeExerciseLB.Content = App.AllTimeExercise();
+            AllTimeExerciseLB.Content = App.AllTimeExercise(false);
         }
+
+       
 
         private void TargeLongTB_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -671,7 +729,7 @@ namespace Target_CNC_GC_08_04_20
             DistanceCalculete();
         }
 
-        
+
 
         private void WLonNewRB_Checked(object sender, RoutedEventArgs e)
         {
@@ -699,55 +757,55 @@ namespace Target_CNC_GC_08_04_20
             double startLongitude = ex.StartLongitude;
 
             if (!OriginalName(TargenNameTB.Text))
-                {
-                    MessageBox.Show($"Мишень с наименованием {TargenNameTB.Text} уже есть!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+            {
+                MessageBox.Show($"Мишень с наименованием {TargenNameTB.Text} уже есть!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-                if (TargenNameTB.Text == "")
-                {
-                    MessageBox.Show("Обозначение не может быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if (TargetTypeCB.Text == "")
-                {
-                    MessageBox.Show("Необходимо выбрать тип мишени!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if (SensorBlockсTB.Text == "")
-                {
-                    MessageBox.Show("Необходимо указать номер блока датчиков!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if (IndicationBlockTB.Text == "")
-                {
-                    MessageBox.Show("Необходимо указать номер блока индикации!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if (!OriginalSensorNomber(SensorBlockсTB.Text))
-                {
-                    MessageBox.Show($"Блок датчиков № {SensorBlockсTB.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if (((TargeLongTB.Text == "") && (TargeLatTB.Text != "")) || ((TargeLongTB.Text != "") && (TargeLatTB.Text == "")))
-                {
-                    MessageBox.Show("Должны быть заполнены или обе координаты, или ни одной!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if ((TargeLongTB.Text == "") && (TargeLatTB.Text == ""))
-                    App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), startLatitude, startLongitude, TargetTypeCB.SelectedIndex));
-                else
-                {
-                    if (ELatNewRB.IsChecked == true) targetLat = Math.Abs(double.Parse(TargeLatTB.Text)) * (-1);
-                    else targetLat = Math.Abs(double.Parse(TargeLatTB.Text));
-                    if (WLonNewRB.IsChecked == true) targetLon = Math.Abs(double.Parse(TargeLongTB.Text)) * (-1);
-                    else targetLon = Math.Abs(double.Parse(TargeLongTB.Text));
-                    App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, startLatitude, startLongitude, TargetTypeCB.SelectedIndex));
-                }
+            if (TargenNameTB.Text == "")
+            {
+                MessageBox.Show("Обозначение не может быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (TargetTypeCB.Text == "")
+            {
+                MessageBox.Show("Необходимо выбрать тип мишени!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (SensorBlockсTB.Text == "")
+            {
+                MessageBox.Show("Необходимо указать номер блока датчиков!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (IndicationBlockTB.Text == "")
+            {
+                MessageBox.Show("Необходимо указать номер блока индикации!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!OriginalSensorNomber(SensorBlockсTB.Text))
+            {
+                MessageBox.Show($"Блок датчиков № {SensorBlockсTB.Text} уже используется!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (((TargeLongTB.Text == "") && (TargeLatTB.Text != "")) || ((TargeLongTB.Text != "") && (TargeLatTB.Text == "")))
+            {
+                MessageBox.Show("Должны быть заполнены или обе координаты, или ни одной!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if ((TargeLongTB.Text == "") && (TargeLatTB.Text == ""))
+                App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), startLatitude, startLongitude, TargetTypeCB.SelectedIndex));
+            else
+            {
+                if (ELatNewRB.IsChecked == true) targetLat = Math.Abs(double.Parse(TargeLatTB.Text)) * (-1);
+                else targetLat = Math.Abs(double.Parse(TargeLatTB.Text));
+                if (WLonNewRB.IsChecked == true) targetLon = Math.Abs(double.Parse(TargeLongTB.Text)) * (-1);
+                else targetLon = Math.Abs(double.Parse(TargeLongTB.Text));
+                App.TargetList.Add(new Target(TargenNameTB.Text, int.Parse(SensorBlockсTB.Text), int.Parse(IndicationBlockTB.Text), targetLat, targetLon, startLatitude, startLongitude, TargetTypeCB.SelectedIndex));
+            }
             App.RefreshAllTargetName();
             TargetsDataGrid.ItemsSource = App.TargetList;
 
-            
+
         }
         private bool OriginalSensorNomber(string SensorNomber)
         {
@@ -769,7 +827,7 @@ namespace Target_CNC_GC_08_04_20
 
         private void TargetsDataGrid_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
         }
 
         //Удаление мишени
@@ -777,16 +835,16 @@ namespace Target_CNC_GC_08_04_20
         {
             if (e.Key == Key.Delete)
             {
-               var tar= TargetsDataGrid.SelectedItem as Target; //Получаю выбранную запись в переменную tar как объект Target
-               foreach (Shows sh in App.ShowsList)
+                var tar = TargetsDataGrid.SelectedItem as Target; //Получаю выбранную запись в переменную tar как объект Target
+                foreach (Shows sh in App.ShowsList)
                 {
-                    if (sh.Target==tar.NameTarget)
+                    if (sh.Target == tar.NameTarget)
                     {
                         MessageBox.Show("Данная мишень задействована в показах./n Исключите её из показаов прежде чем удалять", "Внимание!");
                         e.Handled = true;
                     }
                 }
-         
+
             }
         }
 
@@ -794,15 +852,15 @@ namespace Target_CNC_GC_08_04_20
         private void ExerciseDG_PreviewKeyDown(object sender, KeyEventArgs e)
         {
 
-            if (e.Key == Key.Delete) 
+            if (e.Key == Key.Delete)
             {
-                
+
                 string nameUploadFile = "Exercise/" + App.exerciseActiv.Name + ".txt";
-               
+
                 File.Delete(nameUploadFile);
                 App.exerciseActiv = null;
-                
-                
+
+
             }
         }
 
@@ -843,7 +901,7 @@ namespace Target_CNC_GC_08_04_20
                 var temp = e.Row.Item as Exercise;
                 nameBeforChange = temp.Name;
             }
-            
+
 
         }
         string nameTargetGBTemp, nomberSensorBlockDGTemp;
@@ -856,20 +914,52 @@ namespace Target_CNC_GC_08_04_20
 
         private void ShowsDG_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
-            
+
+
         }
 
         private void ShowsDG_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {
-                AllTimeExerciseLB.Content = App.AllTimeExercise();
+                AllTimeExerciseLB.Content = App.AllTimeExercise(false);
+                
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            startTime.Text = DateTime.Now.ToString();
+            App.exercisePlay.RealTime100ms = 0;
+            App.exercisePlay.IsActiv = true;
+        }
+
+        private void ExerciseNameForPlayCB_DropDownOpened(object sender, EventArgs e)
+        {
+            ExerciseNameForPlayCB.ItemsSource = null;
+            App.ExerciseListUbdate();
+            ExerciseNameForPlayCB.ItemsSource = App.AllExerciseName;
+        }
+
+        private void ScvodNomberForPlayCB_DropDownOpened(object sender, EventArgs e)
+        {
+            ScvodNomberForPlayCB.ItemsSource = App.allScvodList;
+        }
+
+        private void PersonNomberForPlayCB_DropDownOpened(object sender, EventArgs e)
+        {
+            if (App.PersonList.Count > 0)
+            {
+                PersonNomberForPlayCB.ItemsSource = null;
+                App.PersonInScvod.Clear();
+                foreach (Person per in App.PersonList)
+                {
+                    if (ScvodNomberForPlayCB.Text == per.Scvod.ToString())
+                        App.PersonInScvod.Add(per.Nomber);
+                }
+                PersonNomberForPlayCB.ItemsSource = App.PersonInScvod;
+            }
+
 
         }
 
@@ -1005,8 +1095,300 @@ namespace Target_CNC_GC_08_04_20
 
             }
         }
-        
-    }
-    
 
+
+        private void nomberPeorsonTB_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (nomberPeorsonTB.Text == "Номер...")
+            {
+                nomberPeorsonTB.Text = "";
+                nomberPeorsonTB.Foreground = Brushes.Black;
+                nomberPeorsonTB.FontStyle = FontStyles.Normal;
+            }
+
+        }
+
+        private void nomberPeorsonTB_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (nomberPeorsonTB.Text == "")
+            {
+                nomberPeorsonTB.Text = "Номер...";
+                nomberPeorsonTB.Foreground = Brushes.Gray;
+                nomberPeorsonTB.FontStyle = FontStyles.Italic;
+            }
+        }
+
+        private void personNameTB_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (personNameTB.Text == "Имя...")
+            {
+                personNameTB.Text = "";
+                personNameTB.Foreground = Brushes.Black;
+                personNameTB.FontStyle = FontStyles.Normal;
+            }
+
+        }
+
+        private void personNameTB_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (personNameTB.Text == "")
+            {
+                personNameTB.Text = "Имя...";
+                personNameTB.Foreground = Brushes.Gray;
+                personNameTB.FontStyle = FontStyles.Italic;
+            }
+
+        }
+
+        private void personFamTB_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (personFamTB.Text == "Фамилия...")
+            {
+                personFamTB.Text = "";
+                personFamTB.Foreground = Brushes.Black;
+                personFamTB.FontStyle = FontStyles.Normal;
+            }
+
+        }
+
+        private void personFamTB_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (personFamTB.Text == "")
+            {
+                personFamTB.Text = "Фамилия...";
+                personFamTB.Foreground = Brushes.Gray;
+                personFamTB.FontStyle = FontStyles.Italic;
+            }
+
+        }
+
+        private void allScvodTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            if (App.NomberMore0Int(allScvodTextBox.Text))
+            {
+                Person.allScvod = int.Parse(allScvodTextBox.Text);
+                App.allScvodList.Clear();
+                for (int i = 1; i <= Person.allScvod; i++)
+                {
+                    int str = i;
+                    App.allScvodList.Add(str);
+                }
+
+            }
+
+            scvodCB.ItemsSource = App.allScvodList;
+
+
+
+        }
+
+        private void midddleNameTB_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (midddleNameTB.Text == "Отчество...")
+            {
+                midddleNameTB.Text = "";
+                midddleNameTB.Foreground = Brushes.Black;
+                midddleNameTB.FontStyle = FontStyles.Normal;
+            }
+
+        }
+
+        private void midddleNameTB_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (midddleNameTB.Text == "")
+            {
+                midddleNameTB.Text = "Отчество...";
+                midddleNameTB.Foreground = Brushes.Gray;
+                midddleNameTB.FontStyle = FontStyles.Italic;
+            }
+
+        }
+
+        private void allScvodTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (allScvodTextBox.Text == "1")
+            {
+                allScvodTextBox.Text = "";
+                allScvodTextBox.Foreground = Brushes.Black;
+                allScvodTextBox.FontStyle = FontStyles.Normal;
+            }
+        }
+
+        private void allScvodTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+
+        private void nomberPeorsonTB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if ((nomberPeorsonTB.Text != "Номер...") && (nomberPeorsonTB.Text != ""))
+                if (!App.NomberMore0Int(nomberPeorsonTB.Text))
+                {
+                    MessageBox.Show("Номер должен быть числом", "Ошибка!");
+                    nomberPeorsonTB.Text = "";
+                }
+        }
+
+        private void addPersonBut_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void addPersonBut_Click(object sender, RoutedEventArgs e)
+        {
+            if (App.NomberMore0Int(nomberPeorsonTB.Text) && (App.NomberMore0Int(scvodCB.Text)))
+            {
+                if (OriginalNomber(nomberPeorsonTB.Text))
+                {
+                    App.PersonList.Add(new Person(int.Parse(nomberPeorsonTB.Text), int.Parse(scvodCB.Text), personNameTB.Text, personFamTB.Text, midddleNameTB.Text));
+                    personLB.ItemsSource = App.PersonList;
+                    string path = @"file.txt";
+                    using (StreamWriter st = new StreamWriter(path, true, System.Text.Encoding.UTF8))
+                    {
+
+                        string str = nomberPeorsonTB.Text + " " + scvodCB.Text + " " + personNameTB.Text + " " + personFamTB.Text + " " + midddleNameTB.Text;
+
+                        st.WriteLine(str);
+                    }
+                    midddleNameTB.Text = "Отчество...";
+                    midddleNameTB.Foreground = Brushes.Gray;
+                    midddleNameTB.FontStyle = FontStyles.Italic;
+                    personFamTB.Text = "Фамилия...";
+                    personFamTB.Foreground = Brushes.Gray;
+                    personFamTB.FontStyle = FontStyles.Italic;
+                    personNameTB.Text = "Имя...";
+                    personNameTB.Foreground = Brushes.Gray;
+                    personNameTB.FontStyle = FontStyles.Italic;
+                    nomberPeorsonTB.Text = "Номер...";
+                    nomberPeorsonTB.Foreground = Brushes.Gray;
+                    nomberPeorsonTB.FontStyle = FontStyles.Italic;
+                }
+                else MessageBox.Show("Вводимый номер участника уже есть!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+
+            }
+            else if (!App.NomberMore0Int(nomberPeorsonTB.Text)) MessageBox.Show("Номер должен быть числом!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning); else MessageBox.Show("Сквод не должен быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        private void ExerciseNameForPlayCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+           
+        }
+
+        private void ExerciseNameForPlayCB_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ExerciseNameForPlayCB_DropDownClosed(object sender, EventArgs e)
+        {
+            if (App.ExerciseList.Count > 0)
+            {
+                foreach (Exercise ex in App.ExerciseList)
+                {
+                    if (ex.Name== ExerciseNameForPlayCB.Text)
+                    {
+                        App.exercisePlay = ex;// Определяем упражнение для выполнения по совпадению выб имени
+                       
+                            string nameLoadFile = "Exercise/" + App.exercisePlay.Name + ".txt";//Формирование имени файла с данными
+                            App.LoadTargetForPlay(nameLoadFile, ex.StartLatitude, ex.StartLongitude);//Загрузка данных из требуемого файла в коллекции для выполнения упражнения
+                            Shows.StartTimeRefresh(true);//Обновление времён начала показов
+                            ProgressExerciseDG.ItemsSource = null;
+                            ProgressExerciseDG.ItemsSource = App.ShowsPlayList;// 
+                        AboutExercisePlayTB.Text = App.exercisePlay.Description;
+                        AllTimeForPlayTB.Text = App.exercisePlay.AllTime.ToString();
+                        AllTimeForPlayTB.Text = App.AllTimeExercise(true).ToString();
+                        App.exercisePlay.AllTime = App.AllTimeExercise(true);
+                        DrawGant();
+                        TimeNow.Maximum = App.exercisePlay.AllTime * 10;
+
+                    }
+                }
+                
+            }
+        }
+
+        private void SaveResoultPlayBut_Click(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+        private bool OriginalNomber(string newNomber)
+        {
+
+            foreach (Person man in App.PersonList)
+                if (man.Nomber.ToString() == newNomber) return false;
+            return true;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ExerciseNameForPlayCB.Text!="")
+            DrawGant();
+        }
+
+        //Отрисовка диаграммы ганта
+        private void DrawGant()
+        {
+            Gant.Children.Clear();
+
+            double longGant = Gant.ActualWidth - 150;
+            double step = longGant / App.exercisePlay.AllTime;
+
+            for (int i = 0; i < App.exercisePlay.AllTime; i++)
+            {
+                Line line = new Line();
+                line.X1 = 150;
+                line.Y1 = 0;
+                line.X2 = 150;
+                line.Y2 = 35 * App.ShowsPlayList.Count;
+                line.Stroke = Brushes.Gray;
+                line.StrokeThickness = 0.5;
+                TranslateTransform TranslateLine = new TranslateTransform();
+                TranslateLine.X = step * i;
+                line.RenderTransform = TranslateLine;
+                Gant.Children.Add(line);
+            }
+            for (int i = 0; i < App.ShowsPlayList.Count; i++)
+            {
+                Rectangle rec = new Rectangle();
+                rec.Width = Gant.ActualWidth;
+                rec.Height = 35;
+                rec.Stroke = Brushes.Black;
+                rec.StrokeThickness = 0.5;
+                TranslateTransform myTranslate = new TranslateTransform();
+                myTranslate.Y = rec.Height * i;
+                Label label = new Label();
+                label.Content = "Показ № " + (i + 1);
+                label.FontFamily = new FontFamily("Segoe UI");
+                label.FontWeight = FontWeights.Bold;
+                rec.RenderTransform = myTranslate;
+                label.RenderTransform = myTranslate;
+                Gant.Children.Add(rec);
+                Gant.Children.Add(label);
+                Rectangle recShow = new Rectangle();
+                recShow.Fill = Brushes.Gray;
+                recShow.Stroke = Brushes.White;
+                recShow.StrokeThickness = 3;
+                recShow.Width = step * App.ShowsPlayList[i].ShowTimeSec;
+                recShow.Height = 35;
+                TranslateTransform translate = new TranslateTransform();
+                translate.Y = rec.Height * i;
+                translate.X = 150 + App.ShowsPlayList[i].StartTime * step;
+                recShow.RenderTransform = translate;
+                Gant.Children.Add(recShow);
+
+            }
+
+
+        }
+
+       
+
+
+
+    }
 }

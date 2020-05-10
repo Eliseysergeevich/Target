@@ -21,15 +21,14 @@ namespace Target_CNC_GC_08_04_20
     /// </summary>
     public partial class PeopleWin : Window
     {
-        ObservableCollection<string> allScvodList;
-        ObservableCollection<Person> PersonList;
-        public PeopleWin()
+       
+    public PeopleWin()
         {
             InitializeComponent();
-            PersonList = new ObservableCollection<Person> { };
-            allScvodList = new ObservableCollection<string> { };
+            
             allScvodTextBox.Text = "1";
-            scvodCB.ItemsSource = allScvodList;
+            scvodCB.ItemsSource = App.allScvodList;
+            App.PersonList.Clear();
             string path = @"file.txt";
             using (StreamReader st = new StreamReader(path, System.Text.Encoding.Default))
             {
@@ -41,11 +40,11 @@ namespace Target_CNC_GC_08_04_20
                     string[] words = line.Split(new char[] { ' ' });
                     if (words.Length == 5)
                     {
-                        PersonList.Add(new Person(int.Parse(words[0]), int.Parse(words[1]), words[2], words[3], words[4]));
+                        App.PersonList.Add(new Person(int.Parse(words[0]), int.Parse(words[1]), words[2], words[3], words[4]));
                     }
                     
                 }
-                personLB.ItemsSource = PersonList;
+                personLB.ItemsSource = App.PersonList;
             }
         }
 
@@ -119,16 +118,16 @@ namespace Target_CNC_GC_08_04_20
             if (App.NomberMore0Int(allScvodTextBox.Text))
             {
                 Person.allScvod = int.Parse(allScvodTextBox.Text);
-                allScvodList.Clear();
+                App.allScvodList.Clear();
                 for (int i = 1; i <= Person.allScvod; i++)
                 {
-                    String str = i.ToString();
-                    allScvodList.Add(str);
+                    int str = i;
+                    App.allScvodList.Add(str);
                 }
 
             }
 
-            scvodCB.ItemsSource = allScvodList;
+            scvodCB.ItemsSource = App.allScvodList;
 
 
 
@@ -193,8 +192,8 @@ namespace Target_CNC_GC_08_04_20
             if (App.NomberMore0Int(nomberPeorsonTB.Text)&&(App.NomberMore0Int(scvodCB.Text))) {
                 if (OriginalNomber(nomberPeorsonTB.Text))
                 {
-                    PersonList.Add(new Person(int.Parse(nomberPeorsonTB.Text), int.Parse(scvodCB.Text), personNameTB.Text, personFamTB.Text, midddleNameTB.Text));
-                    personLB.ItemsSource = PersonList;
+                    App.PersonList.Add(new Person(int.Parse(nomberPeorsonTB.Text), int.Parse(scvodCB.Text), personNameTB.Text, personFamTB.Text, midddleNameTB.Text));
+                    personLB.ItemsSource = App.PersonList;
                     string path = @"file.txt";
                     using (StreamWriter st = new StreamWriter(path, true, System.Text.Encoding.UTF8))
                     {
@@ -225,7 +224,7 @@ namespace Target_CNC_GC_08_04_20
         private bool OriginalNomber(string newNomber)
         {
             
-            foreach (Person man in PersonList)
+            foreach (Person man in App.PersonList)
                 if (man.Nomber.ToString() == newNomber) return false;
             return true;
         }
@@ -240,7 +239,7 @@ namespace Target_CNC_GC_08_04_20
                 File.Create(path).Close();
                 
             }                          
-            foreach (Person man in PersonList )
+            foreach (Person man in App.PersonList )
                 using (StreamWriter st = new StreamWriter(path, true, System.Text.Encoding.UTF8))
                 {
                     string str = man.Nomber.ToString() + " " + man.Scvod.ToString() + " " + man.Name + " " + man.Fam + " " + man.MiddleName;
@@ -248,5 +247,6 @@ namespace Target_CNC_GC_08_04_20
                 }
             App.q = false;
         }
+       
     }
 }

@@ -30,8 +30,10 @@ namespace Target_CNC_GC_08_04_20.Data
             Activ = false;
         }
 
-        public static void StartTimeRefresh()
+        public static void StartTimeRefresh(bool play)
         {
+            
+            if (!play)
             for ( int i=0; i<App.ShowsList.Count; i++)
             {
                 App.ShowsList[i].StartTime = App.ShowsList[i].PreTimeSec;
@@ -42,6 +44,18 @@ namespace Target_CNC_GC_08_04_20.Data
                             App.ShowsList[i].StartTime += App.ShowsList[j].PreTimeSec + App.ShowsList[j].ShowTimeSec;
                 }
             }
+            else
+                for (int i = 0; i < App.ShowsPlayList.Count; i++)
+                {
+                    App.ShowsPlayList[i].StartTime = App.ShowsPlayList[i].PreTimeSec;
+                    if (App.ShowsPlayList[i].Serial != 1)
+                    {
+                        for (int j = 0; j < App.ShowsPlayList.Count; j++)
+                            if (App.ShowsPlayList[i].Serial > App.ShowsPlayList[j].Serial)
+                                App.ShowsPlayList[i].StartTime += App.ShowsPlayList[j].PreTimeSec + App.ShowsPlayList[j].ShowTimeSec;
+                    }
+                }
+
         }
 
     }

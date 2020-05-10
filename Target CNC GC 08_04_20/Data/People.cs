@@ -58,6 +58,19 @@ namespace Target_CNC_GC_08_04_20
             get { return nomber; }
             set { nomber = value; }
         }
+        public static int MaxScvod()
+        {
+            if (App.PersonList.Count > 0)
+            {
+                int max = App.PersonList[0].Scvod;
+                for (int i=1;i< App.PersonList.Count; i++)
+                {
+                    if (App.PersonList[i].Scvod > max) max = App.PersonList[i].Scvod;
+                }
+                return max;
+            }
+            return 0;
+        }
     }
    
 
