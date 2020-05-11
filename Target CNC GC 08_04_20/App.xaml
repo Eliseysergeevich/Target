@@ -5,7 +5,7 @@
              xmlns:local1="clr-namespace:Target_CNC_GC_08_04_20.Data"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        
+
         <SolidColorBrush x:Key="ControlColorBrush" Color="{x:Static SystemColors.ControlColor}" />
         <Style TargetType="Button">
             <Setter Property="Width" Value="150"/>
@@ -18,13 +18,13 @@
                 <Setter.Value>
                     <LinearGradientBrush >
                         <GradientStop Color="Firebrick" Offset="0.8" />
-                            <GradientStop Color="White" Offset="1" />
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="Foreground" Value="White"/>
+                        <GradientStop Color="White" Offset="1" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
 
-            </Style>
+        </Style>
         <Style TargetType="TextBox">
             <Setter Property="Height" Value="25"/>
             <Setter Property="FontFamily" Value="Arial"/>
@@ -54,9 +54,9 @@
                         </RadialGradientBrush>
                     </Ellipse.Fill>
                 </Ellipse>
-                <TextBlock x:Name="buttonCaption" VerticalAlignment="Center"
+                <!--<TextBlock x:Name="buttonCaption" VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    FontWeight="Bold" FontSize="72" Text="СТАРТ!" Background="#00000000" Foreground="White"/>
+                    FontWeight="Bold" FontSize="72" Text="СТАРТ"  Background="#00000000" Foreground="White"/>-->
             </Grid>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="true" >
@@ -76,7 +76,7 @@
         </ControlTemplate>
         <ControlTemplate x:Key="StopButtonTemplate" TargetType="{x:Type Button}">
             <Grid>
-                <Rectangle x:Name="RectangetBut" Height="55" Width="350" RadiusX="25" RadiusY="25" Fill="#FFFB0909" StrokeThickness="5" >
+                <Rectangle x:Name="RectangetBut" Height="55" Width="350" RadiusX="25" RadiusY="25" StrokeThickness="5" Fill="#FFC70404" >
                     <Rectangle.Stroke>
                         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                             <GradientStop Color="#FFF7EDED" Offset="0.461"/>

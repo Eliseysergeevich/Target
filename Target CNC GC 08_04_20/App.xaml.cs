@@ -260,6 +260,10 @@ namespace Target_CNC_GC_08_04_20
             }
                       
         }
+        public static void TextStartBut()
+        {
+            
+        }
         
 
     }

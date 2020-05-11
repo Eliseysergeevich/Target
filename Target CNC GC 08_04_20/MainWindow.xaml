@@ -122,7 +122,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <GroupBox Header="Упражнение" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-                                        <ComboBox x:Name="ExerciseNameForPlayCB" Height="30" FontSize="24" FontWeight="Bold" DropDownOpened="ExerciseNameForPlayCB_DropDownOpened" SelectionChanged="ExerciseNameForPlayCB_SelectionChanged_1" DropDownClosed="ExerciseNameForPlayCB_DropDownClosed"  />
+                                        <ComboBox x:Name="ExerciseNameForPlayCB" Height="30" FontSize="24" FontWeight="Bold" DropDownOpened="ExerciseNameForPlayCB_DropDownOpened" SelectionChanged="ExerciseNameForPlayCB_SelectionChanged" DropDownClosed="ExerciseNameForPlayCB_DropDownClosed"  />
                                     </GroupBox>
                                     <GroupBox Header="Сквод" Grid.Row="1" Grid.Column="0">
                                         <ComboBox x:Name="ScvodNomberForPlayCB" Height="30" FontWeight="Bold" FontSize="20" DropDownOpened="ScvodNomberForPlayCB_DropDownOpened"/>
@@ -185,14 +185,22 @@
                                         <RowDefinition Height="400"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <Button  x:Name="SartBut" Template="{DynamicResource RoundButtonTemplate}" Width="auto" Height="auto" Click="Button_Click" >
-
+                                    <Button  x:Name="SartBut" Template="{DynamicResource RoundButtonTemplate}" Width="auto" Height="auto" Click="Button_Click" />
+                                    <TextBlock x:Name="buttonCaption" VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    FontWeight="Bold" FontSize="72" Text="СТАРТ"  Background="#00000000" Foreground="White"/>
+                                    <Button x:Name="StopPlayBut" Template="{StaticResource StopButtonTemplate}" Grid.Row="1" Height="auto" Width="auto" Content="СТОП" BorderBrush="{x:Null}" Foreground="{x:Null}" Click="StopPlayBut_Click">
+                                        <Button.Background>
+                                            <LinearGradientBrush>
+                                                <GradientStop Color="Firebrick" Offset="0.843"/>
+                                                <GradientStop Color="White" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Button.Background>
                                     </Button>
-                                    <Button x:Name="StopPlayBut" Template="{StaticResource StopButtonTemplate}" Grid.Row="1" Height="auto" Width="auto" Content="СТОП" BorderBrush="{x:Null}" Foreground="{x:Null}"/>
                                 </Grid>
                             </Grid>
                             <GridSplitter Grid.Row="1" ShowsPreview="False" Height="3"  HorizontalAlignment="Stretch" />
-                            <ProgressBar x:Name="TimeNow" Grid.Row="2" Margin="150,0,0,0"/>
+                            <ProgressBar x:Name="TimeNow" Grid.Row="2" Margin="150,0,0,0" Foreground="#FFB6B63F" Panel.ZIndex="1" Opacity="0.5"/>
                             <Canvas x:Name="Gant" Grid.Row="2">
 
 
@@ -273,7 +281,16 @@
                                 <GroupBox Header="Описание" Grid.Row="4">
                                     <TextBox x:Name="AboutExerciseTB" TextWrapping="Wrap" Width="auto" Height="auto"/>
                                 </GroupBox>
-                                <Button x:Name="AddExerciseBut" Grid.Row="5" HorizontalAlignment="Left" Content="Добавить" Click="AddExerciseBut_Click"/>
+                                <Button x:Name="AddExerciseBut" Grid.Row="5" HorizontalAlignment="Left" Content="Добавить" Click="AddExerciseBut_Click" Height="30" Width="150">
+                                    <Button.Background>
+                                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,1">
+                                            <GradientStop Color="Firebrick" Offset="0.071"/>
+                                            <GradientStop Color="White"/>
+                                            <GradientStop Color="#FFFBF8F8" Offset="0.996"/>
+                                            <GradientStop Color="Firebrick" Offset="0.933"/>
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                </Button>
                                 <DataGrid x:Name="ExerciseDG" AutoGenerateColumns="False" Grid.Row="6" SelectionMode="Single"  SelectionChanged="ExerciseDG_SelectionChanged" FontWeight="Thin" FontFamily="Georgia" PreviewKeyDown="ExerciseDG_PreviewKeyDown" KeyUp="ExerciseDG_KeyUp" CellEditEnding="ExerciseDG_CellEditEnding" BeginningEdit="ExerciseDG_BeginningEdit">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Наименование" FontSize="14" Binding="{Binding Path=Name}"/>
@@ -391,15 +408,17 @@
                                         <TextBox x:Name="AngleTB" IsReadOnly="True" Background="Gainsboro"/>
                                     </GroupBox>
                                 </Grid>
-                                <Button x:Name="AddTargenButton" Grid.Row="6" HorizontalAlignment="Left" Content="Добавить" Foreground="#FFF9F5F5" Click="AddTargenButton_Click"  >
+                                <Button x:Name="AddTargenButton" Grid.Row="6" HorizontalAlignment="Left" Content="Добавить" Foreground="#FFF9F5F5" Click="AddTargenButton_Click" Height="30" Width="150"  >
                                     <Button.BorderBrush>
                                         <SolidColorBrush Color="#FF707070" Opacity="0.5"/>
                                     </Button.BorderBrush>
                                     <Button.Background>
-                                        <RadialGradientBrush RadiusY="4" RadiusX="1">
-                                            <GradientStop Color="Firebrick" Offset="0.432"/>
-                                            <GradientStop Color="White" Offset="0.517"/>
-                                        </RadialGradientBrush>
+                                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,1">
+                                            <GradientStop Color="Firebrick" Offset="0.071"/>
+                                            <GradientStop Color="White"/>
+                                            <GradientStop Color="#FFFBF8F8" Offset="0.996"/>
+                                            <GradientStop Color="Firebrick" Offset="0.933"/>
+                                        </LinearGradientBrush>
                                     </Button.Background>
                                 </Button>
                                 <Grid Grid.Row="7">
@@ -476,7 +495,16 @@
                                         </LinearGradientBrush>
                                     </TextBlock.Foreground>
                                 </TextBlock>
-                                <Button x:Name="Add" Grid.Row="1" Content="Создать" Height="25" HorizontalAlignment="Left" Click="ButtonAddShow_Click"/>
+                                <Button x:Name="Add" Grid.Row="1" Content="Создать" Height="30" HorizontalAlignment="Left" Click="ButtonAddShow_Click" Width="150">
+                                    <Button.Background>
+                                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,1">
+                                            <GradientStop Color="Firebrick" Offset="0.071"/>
+                                            <GradientStop Color="White"/>
+                                            <GradientStop Color="#FFFBF8F8" Offset="0.996"/>
+                                            <GradientStop Color="Firebrick" Offset="0.933"/>
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                </Button>
                                 <DataGrid x:Name="ShowsDG" Grid.Row="2" AutoGenerateColumns="False"
                                      CellEditEnding="ShowsDG_CellEditEnding"
                                       BeginningEdit="ShowsDG_BeginningEdit" SelectionChanged="ShowsDG_SelectionChanged" FontFamily="Georgia" KeyUp="ShowsDG_KeyUp" >
@@ -705,29 +733,42 @@
 
 
         <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Bottom">
-            <Button x:Name="conectBT" Content="Подключить"  Grid.Row="1" Click="conectBT_Click">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                        <GradientStop Color="Firebrick" Offset="0.2"/>
-                        <GradientStop Color="White"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <Button x:Name="disConectBT" Content="Отключить"  Grid.Row="1" Click="disConectBT_Click">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                        <GradientStop Color="Firebrick" Offset="0.271"/>
-                        <GradientStop Color="White"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <ComboBox Name="portsCB" Width="150" Height="25" HorizontalAlignment="Left" Margin="5,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}"/>
+            <GroupBox Header="COM порт" FlowDirection="RightToLeft" >
+
+                <StackPanel>
+                    <Button x:Name="conectBT" Content="Подключить"  Grid.Row="1" Click="conectBT_Click">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1" StartPoint="0,1">
+                                <GradientStop Color="Firebrick" Offset="0.94"/>
+                                <GradientStop Color="White" Offset="1"/>
+                                <GradientStop Color="#FFFDF8F8" Offset="0.007"/>
+                                <GradientStop Color="#FEB22222" Offset="0.063"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="disConectBT" Content="Отключить"  Grid.Row="1" Click="disConectBT_Click">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1" StartPoint="0,1">
+                                <GradientStop Color="Firebrick" Offset="0.94"/>
+                                <GradientStop Color="White" Offset="1"/>
+                                <GradientStop Color="#FFFDF8F8" Offset="0.007"/>
+                                <GradientStop Color="#FEB22222" Offset="0.063"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <ComboBox Name="portsCB" Width="150" Height="25" HorizontalAlignment="Left" Margin="5,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}" FlowDirection="LeftToRight"/>
+
+                </StackPanel>
+
+            </GroupBox>
 
             <Button x:Name="Setings"  Content="Настройки" VerticalAlignment="Bottom" Click="Setings_Click">
                 <Button.Background>
-                    <LinearGradientBrush StartPoint="0,0.9" EndPoint="1,1">
-                        <GradientStop Color="Firebrick" Offset="0.911"/>
-                        <GradientStop Color="White" Offset="0.971"/>
+                    <LinearGradientBrush EndPoint="1,1" StartPoint="0,1">
+                        <GradientStop Color="Firebrick" Offset="0.94"/>
+                        <GradientStop Color="White" Offset="1"/>
+                        <GradientStop Color="#FFFDF8F8" Offset="0.007"/>
+                        <GradientStop Color="#FEB22222" Offset="0.063"/>
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>

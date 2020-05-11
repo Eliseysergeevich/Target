@@ -49,8 +49,11 @@ namespace Target_CNC_GC_08_04_20
              //Создание и параметризация таймера
          DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
         timer.Tick += new EventHandler(timer_Tick);
-        timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        timer.Interval = new TimeSpan(0, 0, 0, 1);
         timer.Start();
+
+
+           
 
             //exercise.RealTime100ms = 0;
 
@@ -65,8 +68,15 @@ namespace Target_CNC_GC_08_04_20
             if ((App.exercisePlay!=null) &&(App.exercisePlay.IsActiv == true))
             {
             App.exercisePlay.RealTime100ms++;
-            TimeNow.Value = App.exercisePlay.RealTime100ms;
-                if (TimeNow.Value >= (App.exercisePlay.AllTime*10)) App.exercisePlay.IsActiv = false;
+                TimeNow.Value = App.exercisePlay.RealTime100ms;
+                buttonCaption.FontSize = 100;
+                buttonCaption.Text = (App.exercisePlay.AllTime- App.exercisePlay.RealTime100ms).ToString();
+                if (TimeNow.Value >= (App.exercisePlay.AllTime )) 
+                { App.exercisePlay.IsActiv = false;
+                    SartBut.IsEnabled = true;
+                    buttonCaption.FontSize = 72;
+                    buttonCaption.Text = "СТАРТ";
+                }
             }
             
             // dataSerialTB.Text = exercise.RealTime100ms.ToString();
@@ -927,11 +937,21 @@ namespace Target_CNC_GC_08_04_20
             }
         }
 
+        //СТАРТ упражнение
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (App.exercisePlay != null)
+            {
             startTime.Text = DateTime.Now.ToString();
             App.exercisePlay.RealTime100ms = 0;
             App.exercisePlay.IsActiv = true;
+                if (App.exercisePlay.IsActiv)
+                {
+                    SartBut.IsEnabled = false;
+
+                }
+            }
+            
         }
 
         private void ExerciseNameForPlayCB_DropDownOpened(object sender, EventArgs e)
@@ -1273,42 +1293,42 @@ namespace Target_CNC_GC_08_04_20
             else if (!App.NomberMore0Int(nomberPeorsonTB.Text)) MessageBox.Show("Номер должен быть числом!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning); else MessageBox.Show("Сквод не должен быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
+
         private void ExerciseNameForPlayCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
-        }
-
-        private void ExerciseNameForPlayCB_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void ExerciseNameForPlayCB_DropDownClosed(object sender, EventArgs e)
-        {
+            ComboBox comboBox = (ComboBox)sender;
+            String selectedItem = (String)comboBox.SelectedItem;  
             if (App.ExerciseList.Count > 0)
             {
                 foreach (Exercise ex in App.ExerciseList)
                 {
-                    if (ex.Name== ExerciseNameForPlayCB.Text)
+                    if (ex.Name == selectedItem)
                     {
                         App.exercisePlay = ex;// Определяем упражнение для выполнения по совпадению выб имени
-                       
-                            string nameLoadFile = "Exercise/" + App.exercisePlay.Name + ".txt";//Формирование имени файла с данными
-                            App.LoadTargetForPlay(nameLoadFile, ex.StartLatitude, ex.StartLongitude);//Загрузка данных из требуемого файла в коллекции для выполнения упражнения
-                            Shows.StartTimeRefresh(true);//Обновление времён начала показов
-                            ProgressExerciseDG.ItemsSource = null;
-                            ProgressExerciseDG.ItemsSource = App.ShowsPlayList;// 
+
+                        string nameLoadFile = "Exercise/" + App.exercisePlay.Name + ".txt";//Формирование имени файла с данными
+                        App.LoadTargetForPlay(nameLoadFile, ex.StartLatitude, ex.StartLongitude);//Загрузка данных из требуемого файла в коллекции для выполнения упражнения
+                        Shows.StartTimeRefresh(true);//Обновление времён начала показов
+                        ProgressExerciseDG.ItemsSource = null;
+                        ProgressExerciseDG.ItemsSource = App.ShowsPlayList;// 
                         AboutExercisePlayTB.Text = App.exercisePlay.Description;
-                        AllTimeForPlayTB.Text = App.exercisePlay.AllTime.ToString();
                         AllTimeForPlayTB.Text = App.AllTimeExercise(true).ToString();
                         App.exercisePlay.AllTime = App.AllTimeExercise(true);
                         DrawGant();
-                        TimeNow.Maximum = App.exercisePlay.AllTime * 10;
+                        TimeNow.Maximum = App.exercisePlay.AllTime;
+                        TimeNow.VerticalAlignment = VerticalAlignment.Top;
+                        TimeNow.Height = 35 * App.ShowsPlayList.Count;
+                      
 
                     }
                 }
-                
+
             }
+        }
+
+        private void ExerciseNameForPlayCB_DropDownClosed(object sender, EventArgs e)
+        {
+            
         }
 
         private void SaveResoultPlayBut_Click(object sender, RoutedEventArgs e)
@@ -1328,6 +1348,12 @@ namespace Target_CNC_GC_08_04_20
         {
             if (ExerciseNameForPlayCB.Text!="")
             DrawGant();
+        }
+
+        private void StopPlayBut_Click(object sender, RoutedEventArgs e)
+        {
+            App.exercisePlay.IsActiv = false;
+            SartBut.IsEnabled = true;
         }
 
         //Отрисовка диаграммы ганта
