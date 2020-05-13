@@ -200,7 +200,7 @@
                                 </Grid>
                             </Grid>
                             <GridSplitter Grid.Row="1" ShowsPreview="False" Height="3"  HorizontalAlignment="Stretch" />
-                            <ProgressBar x:Name="TimeNow" Grid.Row="2" Margin="150,0,0,0" Foreground="#FFB6B63F" Panel.ZIndex="1" Opacity="0.5"/>
+                            <ProgressBar x:Name="TimeNow" Grid.Row="2" Margin="150,35,0,0" Foreground="#FFB6B63F" Panel.ZIndex="1" Opacity="0.5"/>
                             <Canvas x:Name="Gant" Grid.Row="2">
 
 
@@ -705,22 +705,6 @@
                 <StackPanel Grid.Row="2" Orientation="Horizontal" >
 
                     <TextBlock x:Name="dataSerialTB" Width="150" Text="{Binding Path=RealTime100ms}" />
-                    <Button x:Name="situation"  Content="Обстановка" Click="situation_Click">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0.9">
-                                <GradientStop Color="Firebrick" Offset="0.868"/>
-                                <GradientStop Color="White" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <Button x:Name="PersonBut"  Content="Участники" Click="Person_Click">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0.9">
-                                <GradientStop Color="Firebrick" Offset="0.868"/>
-                                <GradientStop Color="White" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
                 </StackPanel>
 
             </Grid>

@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.IO.Ports;
 using System.Windows.Threading;
 using Target_CNC_GC_08_04_20.Data;
+using Path = System.Windows.Shapes.Path;
 
 namespace Target_CNC_GC_08_04_20
 {
@@ -119,6 +120,7 @@ namespace Target_CNC_GC_08_04_20
                             sensorsDG.ItemsSource = null;
                             var sortedUsers = App.SensorsList.OrderBy(u => u.Nomber);
                             sensorsDG.ItemsSource = sortedUsers;
+                            TargetTest(int.Parse(inputStr[1]), int.Parse(inputStr[2]), Convert.ToBoolean(int.Parse(inputStr[3])), Convert.ToBoolean(int.Parse(inputStr[4])));
                             return;
                         }
                     }
@@ -126,10 +128,11 @@ namespace Target_CNC_GC_08_04_20
                     sensorsDG.ItemsSource = null;
                     sensorsDG.ItemsSource = App.SensorsList;
                 }
+                TargetTest(int.Parse(inputStr[1]), int.Parse(inputStr[2]), Convert.ToBoolean(int.Parse(inputStr[3])), Convert.ToBoolean(int.Parse(inputStr[4])));
             }
             if (inputStr[0] == "2")
             {
-                if (App.IndicationList.Count == 0)// Если блоки датчиков отсутствуют в коллекции
+                if (App.IndicationList.Count == 0)// Если блоки индикации отсутствуют в коллекции
                 {
                     App.IndicationList.Add(new IndicationBlock(int.Parse(inputStr[1]), int.Parse(inputStr[2]), int.Parse(inputStr[3])));
                     indicationDG.ItemsSource = null;
@@ -160,6 +163,56 @@ namespace Target_CNC_GC_08_04_20
             }
         }
 
+        private void TargetTest(int nomber, int v2, bool sens1, bool sens2)
+        {
+            if (App.exercisePlay != null)
+            {
+                if (App.exercisePlay.IsActiv)
+                {
+                    if ((sens1) || (sens2))
+                    {
+                        if ((GetShows()!=null)&&(GetShows().Struck!=true))
+                        if (GetShows().Target == GetSendTarget(nomber))
+                        {
+
+                            GetShows().Struck = true;
+                            GetShows().StruckTime100ms = App.exercisePlay.RealTime100ms - GetShows().StartTime;
+                            ProgressExerciseDG.ItemsSource = null;
+                            ProgressExerciseDG.ItemsSource = App.ShowsPlayList;
+
+                        }
+                    }
+                }
+            }
+        }
+
+        //Даёт имя мишени от которой пришёл сигнал
+        private string GetSendTarget(int nomber)
+        {
+            string st = "";
+            foreach (Target tg in App.TargetPlayList)
+            {
+                if (tg.NomberSensorsBlock == nomber)
+                    st = tg.NameTarget;
+            }
+            return st;
+        }
+
+        //Даёт имя мишени активной в данный момент времени
+        private Shows GetShows()
+        {
+            Shows SH = null;
+            foreach(Shows sh in App.ShowsPlayList)
+            {
+                if ((App.exercisePlay.RealTime100ms > sh.StartTime) && (App.exercisePlay.RealTime100ms < sh.StartTime + sh.ShowTimeSec))
+                {
+                    SH = sh;
+                    return SH;
+                }
+                    
+            }
+            return SH;
+        }
 
         private void situation_Click(object sender, RoutedEventArgs e)
         {
@@ -1314,10 +1367,10 @@ namespace Target_CNC_GC_08_04_20
                         AboutExercisePlayTB.Text = App.exercisePlay.Description;
                         AllTimeForPlayTB.Text = App.AllTimeExercise(true).ToString();
                         App.exercisePlay.AllTime = App.AllTimeExercise(true);
-                        DrawGant();
+                        DrawGant1();
                         TimeNow.Maximum = App.exercisePlay.AllTime;
                         TimeNow.VerticalAlignment = VerticalAlignment.Top;
-                        TimeNow.Height = 35 * App.ShowsPlayList.Count;
+                        TimeNow.Height = 35 * App.TargetPlayList.Count;
                       
 
                     }
@@ -1347,13 +1400,15 @@ namespace Target_CNC_GC_08_04_20
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ExerciseNameForPlayCB.Text!="")
-            DrawGant();
+            DrawGant1();
         }
 
         private void StopPlayBut_Click(object sender, RoutedEventArgs e)
         {
+            if (App.exercisePlay != null) { 
             App.exercisePlay.IsActiv = false;
             SartBut.IsEnabled = true;
+        }
         }
 
         //Отрисовка диаграммы ганта
@@ -1412,7 +1467,188 @@ namespace Target_CNC_GC_08_04_20
 
         }
 
-       
+        //Отрисовка диаграммы соревнований, где по вертикали мишени, а по горизонтали показы
+        private void DrawGant1()
+        {
+            Gant.Children.Clear();//Очищаем поле перед новым рисунком
+
+            double longGant = Gant.ActualWidth - 150;//Вычисляется актуальная длина поля
+            double step = longGant / App.exercisePlay.AllTime;//Вычисляется размер шага, соответствующий 1 сек
+
+            //Отрисовываются вертикальные линии секундной сетки
+            for (int i = 0; i < App.exercisePlay.AllTime; i++)
+            {
+                Line line = new Line();
+                line.X1 = 150;
+                line.Y1 = 35;
+                line.X2 = 150;
+                line.Y2 = 35 * App.TargetPlayList.Count+35;
+                line.Stroke = Brushes.Gray;
+                line.StrokeThickness = 0.5;
+                TranslateTransform TranslateLine = new TranslateTransform();
+                TranslateLine.X = step * i;
+                line.RenderTransform = TranslateLine;
+                Gant.Children.Add(line);
+            }
+            DrawTimeScal(step);
+            //Отрисовка основной части диаграммы
+            for (int i =0; i < App.ShowsPlayList.Count; i++)
+            {
+                //Отрисовка шапки
+                Rectangle rec = new Rectangle();
+                rec.Width = (App.ShowsPlayList[i].PreTimeSec+ App.ShowsPlayList[i].ShowTimeSec)*step;
+                rec.Height = 35+35*App.TargetPlayList.Count;
+                rec.Stroke = Brushes.Black;
+                rec.StrokeThickness = 0.2;
+                TranslateTransform myTranslate = new TranslateTransform();
+                myTranslate.X = 150+ (App.ShowsPlayList[i].StartTime- App.ShowsPlayList[i].PreTimeSec) * step; 
+                Label label = new Label();
+                label.Content = "Показ  " + App.ShowsPlayList[i].Serial;
+                label.FontFamily = new FontFamily("Segoe UI");
+                label.FontWeight = FontWeights.Bold;
+                rec.RenderTransform = myTranslate;
+                label.RenderTransform = myTranslate; 
+                Gant.Children.Add(rec);
+                Gant.Children.Add(label);
+
+                //Отрисовка прямоугольников, соответствующих показам
+                Rectangle recShow = new Rectangle();
+                recShow.Fill = Brushes.Gray;
+                recShow.Stroke = Brushes.White;
+                recShow.StrokeThickness = 3;
+                recShow.Width = step * App.ShowsPlayList[i].ShowTimeSec;
+                recShow.Height = 35;
+                TranslateTransform translate = new TranslateTransform();
+                for (int j=0;j<App.TargetPlayList.Count;j++)
+                    if (App.TargetPlayList[j].NameTarget==App.ShowsPlayList[i].Target)
+                translate.Y = 35+35 * j;
+                translate.X = 150 + App.ShowsPlayList[i].StartTime * step;
+                recShow.RenderTransform = translate;
+                Gant.Children.Add(recShow);
+
+                //Отрисовка размерных линий
+                TranslateTransform translate1 = new TranslateTransform();
+                translate1.X = 150 + (App.ShowsPlayList[i].StartTime - App.ShowsPlayList[i].PreTimeSec) * step;
+                for (int j = 0; j < App.TargetPlayList.Count; j++)
+                    if (App.TargetPlayList[j].NameTarget == App.ShowsPlayList[i].Target)
+                        translate1.Y = 35 + 35 * j;
+                TranslateTransform translatelabelPre = new TranslateTransform();
+                translatelabelPre.X = 150 + (App.ShowsPlayList[i].StartTime - App.ShowsPlayList[i].PreTimeSec) * step+  App.ShowsPlayList[i].PreTimeSec * step/2.5;
+                for (int j = 0; j < App.TargetPlayList.Count; j++)
+                    if (App.TargetPlayList[j].NameTarget == App.ShowsPlayList[i].Target)
+                        translatelabelPre.Y = 30 + 35 * j;
+                TranslateTransform translatelabeShow = new TranslateTransform();
+                translatelabeShow.X = 150 + App.ShowsPlayList[i].StartTime * step+ App.ShowsPlayList[i].ShowTimeSec*step/2.5;
+                for (int j = 0; j < App.TargetPlayList.Count; j++)
+                    if (App.TargetPlayList[j].NameTarget == App.ShowsPlayList[i].Target)
+                        translatelabeShow.Y = 30 + 35 * j;
+                Label labelPre = new Label();
+                Label labelShow = new Label();
+                labelPre.Content = App.ShowsPlayList[i].PreTimeSec;
+                labelPre.RenderTransform = translatelabelPre;
+                labelPre.RenderTransform = translatelabelPre;
+                labelPre.Foreground = Brushes.Red;
+                labelShow.Content = App.ShowsPlayList[i].ShowTimeSec;
+                labelShow.RenderTransform = translatelabeShow;
+                
+                Gant.Children.Add(labelPre);
+                Gant.Children.Add(labelShow);
+                DrawDimensionLine(Convert.ToInt32(App.ShowsPlayList[i].PreTimeSec * step), 20, translate1, Brushes.Blue);
+                DrawDimensionLine(Convert.ToInt32(App.ShowsPlayList[i].ShowTimeSec*step),20, translate, Brushes.White);
+            }
+
+            //Отрисовка наименований мишеней по вертикали
+            for (int i = 0; i < App.TargetPlayList.Count; i++)
+            {
+                Rectangle rec = new Rectangle();
+                rec.Width = Gant.ActualWidth;
+                rec.Height = 35;
+                rec.Stroke = Brushes.Black;
+                rec.StrokeThickness = 0.5;
+                TranslateTransform myTranslate = new TranslateTransform();
+                myTranslate.Y = rec.Height * (i+1);
+                Label label = new Label();
+                label.Content = "Мишень  " + App.TargetPlayList[i].NameTarget;
+                label.FontFamily = new FontFamily("Segoe UI");
+                label.FontWeight = FontWeights.Bold;
+                rec.RenderTransform = myTranslate;
+                label.RenderTransform = myTranslate;
+                Gant.Children.Add(rec);
+                Gant.Children.Add(label);
+            }
+            
+        }
+
+        public void DrawTimeScal(double step)
+        {
+            for (int i=0; i < App.exercisePlay.AllTime; i++)
+            {
+                Label label = new Label();
+                Line line = new Line();
+                line.X1 = 150;
+                
+                line.X2 = 150;
+                if (i % 10 == 0)
+                {
+                    line.Y1 = 35;
+                    line.Y2 = 35 * App.TargetPlayList.Count+35+15;
+                    line.StrokeThickness = 1.5;
+                    label.Content = i;
+                    TranslateTransform TranslateLable = new TranslateTransform();
+                    TranslateLable.X = 140+step * i;
+                    TranslateLable.Y = line.Y2 ;
+                    label.RenderTransform = TranslateLable;
+                    Gant.Children.Add(label);
+                } else
+                {
+                    line.Y1 = 35 * App.TargetPlayList.Count + 35;
+                    line.Y2 = line.Y1 + 10;
+                    line.StrokeThickness = 0.5;
+                }
+                
+                line.Stroke = Brushes.Black;
+                
+                TranslateTransform TranslateLine = new TranslateTransform();
+                TranslateLine.X = step * i;
+                line.RenderTransform = TranslateLine;
+                Gant.Children.Add(line);
+            }
+        }
+
+       //Метод отрисовки размерных линий
+            public void DrawDimensionLine(int x, int y,Transform transform, Brush brushes) 
+        {
+            GeometryGroup group = new GeometryGroup();
+            Path p = new Path();
+            LineGeometry line1 = new LineGeometry();
+            LineGeometry line2 = new LineGeometry();
+            LineGeometry line3 = new LineGeometry();
+            LineGeometry line4 = new LineGeometry();
+            LineGeometry line5 = new LineGeometry();
+            line1.StartPoint = new Point(0, 20);
+            line1.EndPoint = new Point(x, y);
+            line2.StartPoint = new Point(0, 20);
+            line2.EndPoint = new Point(10, 15);
+            line3.StartPoint = new Point(0, 20);
+            line3.EndPoint = new Point(10, 25);
+            line4.StartPoint = new Point(x, y);
+            line4.EndPoint = new Point(x-10,y-5);
+            line5.StartPoint = new Point(x, y);
+            line5.EndPoint = new Point(x-10, y+5);
+            group.Children.Add(line1);
+            group.Children.Add(line2);
+            group.Children.Add(line3);
+            group.Children.Add(line4);
+            group.Children.Add(line5);
+            p.Data = group;
+            p.Stroke = brushes;
+            p.RenderTransform = transform;
+            Gant.Children.Add(p);
+
+        }
+        
+        
+
 
 
 
