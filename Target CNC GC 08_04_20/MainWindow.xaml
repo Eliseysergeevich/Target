@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Target_CNC_GC_08_04_20"
         xmlns:local1="clr-namespace:Target_CNC_GC_08_04_20.Data"
+        xmlns:src="clr-namespace:Target_CNC_GC_08_04_20"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
         Icon="Imag\CNCGC.png"
-        MinHeight="450" MinWidth="800"
-        Title="Target CNC GC" Height="750" Width="1200" Closing="Window_Closing" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
+        MinHeight="450" MinWidth="1200"
+        Title="Target CNC GC" Height="750" Width="1500" Closing="Window_Closing" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
     <Window.Resources>
 
         <col:ArrayList x:Key="TargetListRes">
@@ -107,7 +108,7 @@
                             <Grid Grid.Row="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition/>
+                                    <ColumnDefinition MinWidth="550"/>
                                     <ColumnDefinition Width="400"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid Grid.Column="0" >
@@ -148,6 +149,7 @@
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
                                                 <RowDefinition/>
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
@@ -155,17 +157,39 @@
                                                 <Label Content="Начало упражнения - "/>
                                                 <TextBlock x:Name="startTime"/>
                                             </StackPanel>
-
-                                            <DataGrid x:Name="ProgressExerciseDG" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="112"/>
+                                                    <ColumnDefinition Width="250"/>
+                                                    <ColumnDefinition Width="112"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="Упражнение - " Grid.Column="0" Width="auto" HorizontalAlignment="Left"/>
+                                                <TextBox Text="{Binding ElementName=ExerciseNameForPlayCB, Path=Text}" Width="240" IsReadOnly="True" TextAlignment="Center" FontSize="24" Foreground="Red" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left" >
+                                                    <TextBox.Background>
+                                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
+                                                    </TextBox.Background>
+                                                </TextBox>
+                                                <TextBlock Text="Участник № - " Grid.Column="2" Width="112"/>
+                                                <TextBox Text="{Binding ElementName=PersonNomberForPlayCB, Path=Text}" IsReadOnly="True" FontSize="24" Foreground="Red" Grid.Column="3" HorizontalAlignment="Left" FontWeight="Bold" Width="50"/>
+                                            </Grid>
+                                            <DataGrid x:Name="ProgressExerciseDG" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="Показ №" Binding="{Binding Path=Serial}"/>
                                                     <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}"/>
                                                     <DataGridTextColumn Header="Мишень" Binding="{Binding Path=Target}"/>
+                                                    <DataGridTemplateColumn Header="Датчик">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <Image Width="30" Source="Imag\Галочка.png" Opacity="{Binding Path=Struck}"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
                                                     <DataGridTextColumn Header="Результат" Binding="{Binding Path=Struck}"/>
                                                     <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
-                                            <GroupBox Header="Комментарий" Grid.Row="2">
+                                            <GroupBox Header="Комментарий" Grid.Row="3">
                                                 <TextBox x:Name="CommentPlayTB" TextWrapping="Wrap" Height="100"/>
                                             </GroupBox>
                                         </Grid>
@@ -175,9 +199,28 @@
                                             <ColumnDefinition Width="2*"/>
                                             <ColumnDefinition Width="1*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Button x:Name="SaveResoultPlayBut" Content="Сохранить результат" Width="auto" Height="35" VerticalAlignment="Bottom" Grid.Column="0" Click="SaveResoultPlayBut_Click">
+                                        <Button x:Name="SaveResoultPlayBut" Content="Сохранить результат"
+                                                Width="auto" Height="35" VerticalAlignment="Bottom" Grid.Column="0" 
+                                                Click="SaveResoultPlayBut_Click" IsEnabled="False">
+                                            <Button.Background>
+                                                <LinearGradientBrush StartPoint="0,1" EndPoint="1,1">
+                                                    <GradientStop Color="#FF95B01E" Offset="0.956"/>
+                                                    <GradientStop Color="White" Offset="1"/>
+                                                    <GradientStop Color="#FF95B01E" Offset="0.05"/>
+                                                    <GradientStop Color="#FFFAFBF7"/>
+                                                </LinearGradientBrush>
+                                            </Button.Background>
                                         </Button>
-                                        <Button x:Name="ResetResoultPlayBut" Content="Сбросить" Width="auto" VerticalAlignment="Bottom" Grid.Column="1"/>
+                                        <Button x:Name="ResetResoultPlayBut" Content="Сбросить" Width="auto" VerticalAlignment="Bottom" Grid.Column="1" IsEnabled="False" Click="ResetResoultPlayBut_Click">
+                                            <Button.Background>
+                                                <LinearGradientBrush>
+                                                    <GradientStop Color="Firebrick" Offset="0.926"/>
+                                                    <GradientStop Color="White" Offset="1"/>
+                                                    <GradientStop Color="Firebrick" Offset="0.065"/>
+                                                    <GradientStop Color="#FFFDFAFA" Offset="0"/>
+                                                </LinearGradientBrush>
+                                            </Button.Background>
+                                        </Button>
                                     </Grid>
                                 </Grid>
                                 <Grid Grid.Column="2">
@@ -202,11 +245,8 @@
                             <GridSplitter Grid.Row="1" ShowsPreview="False" Height="3"  HorizontalAlignment="Stretch" />
                             <ProgressBar x:Name="TimeNow" Grid.Row="2" Margin="150,35,0,0" Foreground="#FFB6B63F" Panel.ZIndex="1" Opacity="0.5"/>
                             <Canvas x:Name="Gant" Grid.Row="2">
-
-
                             </Canvas>
                         </Grid>
-
                     </TabItem>
                     <TabItem x:Name="SettingsExercise" Header="Конструктор упражнений" >
                         <Grid x:Name="SettingExerciseGrid">
@@ -422,7 +462,7 @@
                                     </Button.Background>
                                 </Button>
                                 <Grid Grid.Row="7">
-                                    <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False" FontFamily="Georgia" FontWeight="Thin" KeyDown="TargetsDataGrid_KeyDown" PreviewKeyDown="TargetsDataGrid_PreviewKeyDown" BeginningEdit="TargetsDataGrid_BeginningEdit" CellEditEnding="TargetsDataGrid_CellEditEnding">
+                                    <DataGrid x:Name="TargetsDataGrid" AutoGenerateColumns="False" FontFamily="Georgia" FontWeight="Thin" FrozenColumnCount="1" KeyDown="TargetsDataGrid_KeyDown" PreviewKeyDown="TargetsDataGrid_PreviewKeyDown" BeginningEdit="TargetsDataGrid_BeginningEdit" CellEditEnding="TargetsDataGrid_CellEditEnding">
 
                                         <DataGrid.Columns>
                                             <DataGridTextColumn x:Name="qwe" Header="Обозначение"  FontSize="16" Binding="{Binding Path=NameTarget}">
@@ -650,26 +690,91 @@
                                 </GroupBox>
 
                             </Grid>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Таблица результатов" FontSize="24" FontFamily="Arial" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Italic">
-                                <TextBlock.Foreground>
-                                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                                        <GradientStop Color="#FFF70D0D" Offset="0.265"/>
-                                        <GradientStop Color="White"/>
-                                        <GradientStop Color="#FFFBF5F5" Offset="1"/>
-                                        <GradientStop Color="#FFF73D3D" Offset="0.791"/>
-                                    </LinearGradientBrush>
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                            <Grid Grid.Column="1" Grid.Row="1">
+                            <Grid Grid.Row="0" Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock  Grid.Column="0" Text="Таблица результатов" FontSize="24" FontFamily="Arial" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Italic">
+                                    <TextBlock.Foreground>
+                                        <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                            <GradientStop Color="#FFF70D0D" Offset="0.265"/>
+                                            <GradientStop Color="White"/>
+                                            <GradientStop Color="#FFFBF5F5" Offset="1"/>
+                                            <GradientStop Color="#FFF73D3D" Offset="0.791"/>
+                                        </LinearGradientBrush>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+
+                            </Grid>
+
+                            <Grid x:Name="ResoltGrid" Grid.Column="1" Grid.Row="1" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
-                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <DataGrid Grid.Row="0" AutoGenerateColumns="False">
+                                <DataGrid x:Name="ResultDG"  Grid.Row="0" AutoGenerateColumns="False" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="true" FontSize="16" >
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Место"/>
-                                        <DataGridTextColumn Header="Участник"/>
-                                        <DataGridTextColumn Header="Очки"/>
+                                        <DataGridTextColumn Header="Упражнение" FontSize="16" Binding="{Binding Path=Exercise}">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Участник" Binding="{Binding Path=PersonNomber}">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Сквод" Binding="{Binding Path=Scvod}">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTemplateColumn Header="Начал упражнение" >
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                         <TextBlock Text="{Binding Path=StartDate}" TextAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Path=StartTime}" TextAlignment="Center"/>
+                                                    </StackPanel>
+                                                   
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Очки" Binding="{Binding Path=Summ}">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <!--<DataGridTextColumn Header="Показ" Binding="{Binding Path=Playlist}"/>-->
+                                        <DataGridTemplateColumn Header="Ход выполнения" >
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <DataGrid  AutoGenerateColumns="False" ItemsSource="{Binding Path=PlayList}" >
+                                                        <DataGrid.Columns>
+                                                            <DataGridTextColumn Header="Показ" Binding="{Binding  Path=Serial}"/>
+                                                            <DataGridCheckBoxColumn Header="Попадание" Binding="{Binding Path=Struck}"/>
+                                                            <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
+                                                        </DataGrid.Columns>
+                                                    </DataGrid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <DataGrid x:Name="ShowsInResDG" AutoGenerateColumns="False" Grid.Row="1"  ItemsSource="{Binding Path=PlayList}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Показ" Binding="{Binding Path=Serial}"/>
+                                        <DataGridCheckBoxColumn Header="Попадание" Binding="{Binding Path=Struck}"/>
+                                        <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>
@@ -697,6 +802,9 @@
 
 
                         </Grid>
+                    </TabItem>
+                    <TabItem Header="Результаты">
+
                     </TabItem>
 
 

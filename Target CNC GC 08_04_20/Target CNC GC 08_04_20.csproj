@@ -74,6 +74,7 @@
     <Compile Include="Data\IndicationBlock.cs" />
     <Compile Include="Data\People.cs" />
     <Compile Include="Data\Play.cs" />
+    <Compile Include="Data\Resoult.cs" />
     <Compile Include="Data\Sensors.cs" />
     <Compile Include="Data\Shows.cs" />
     <Compile Include="Data\TargetView.cs" />
@@ -193,6 +194,10 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Imag\Галочка.png" />
+    <Resource Include="Imag\крестик.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

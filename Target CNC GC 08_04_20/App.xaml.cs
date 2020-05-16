@@ -28,6 +28,8 @@ namespace Target_CNC_GC_08_04_20
         public static ObservableCollection<Sensors> SensorsList = new ObservableCollection<Sensors> { }; //Коллекция блоков датчиков
         public static ObservableCollection<IndicationBlock> IndicationList = new ObservableCollection<IndicationBlock> { }; //Коллекция блоков индикации
         public static ObservableCollection<Shows> ShowsList = new ObservableCollection<Shows> { }; //Коллекция показов при настройке
+        public static ObservableCollection<Resoult> resoultList = new ObservableCollection<Resoult> { }; //Коллекция результатов при настройке
+        public static ObservableCollection<Object> PlayList1 = new ObservableCollection<Object> { }; //Коллекция результатов при настройке
 
         public static ObservableCollection<Target> TargetPlayList = new ObservableCollection<Target> { };//Коллекция мишеней в упражнении при выполнении
         public static ObservableCollection<Shows> ShowsPlayList = new ObservableCollection<Shows> { }; //Коллекция показов при показ при выполнении
@@ -263,6 +265,20 @@ namespace Target_CNC_GC_08_04_20
         public static void TextStartBut()
         {
             
+        }
+        public static int Summ(ObservableCollection<Shows> shows)
+        {
+            int summ = 0;
+            foreach (Shows sh in shows)
+            {
+                
+                if (sh.Struck)
+                {
+                    summ += 10;
+                    summ += sh.ShowTimeSec - sh.StruckTime100ms;
+                }
+            }
+            return summ;
         }
         
 
