@@ -16,9 +16,11 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Background">
                 <Setter.Value>
-                    <LinearGradientBrush >
-                        <GradientStop Color="Firebrick" Offset="0.8" />
+                    <LinearGradientBrush StartPoint="0,1" >
+                        <GradientStop Color="Firebrick" Offset="0.925" />
                         <GradientStop Color="White" Offset="1" />
+                        <GradientStop Color="Firebrick" Offset="0.063"/>
+                        <GradientStop Color="#FFFBF7F7" Offset="0"/>
                     </LinearGradientBrush>
                 </Setter.Value>
             </Setter>

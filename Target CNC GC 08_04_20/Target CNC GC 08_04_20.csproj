@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CsvExport.cs" />
     <Compile Include="Data\Exercise.cs" />
     <Compile Include="Data\IndicationBlock.cs" />
     <Compile Include="Data\People.cs" />
@@ -131,6 +132,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -152,7 +154,7 @@
     <Resource Include="Imag\23КЦУА.png" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Imag\loadim.png" />
+    <Resource Include="Imag\loadim.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Imag\350.png" />
@@ -198,6 +200,12 @@
   <ItemGroup>
     <Resource Include="Imag\Галочка.png" />
     <Resource Include="Imag\крестик.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Imag\cncgc-logo_2019-2240px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="Imag\werty.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

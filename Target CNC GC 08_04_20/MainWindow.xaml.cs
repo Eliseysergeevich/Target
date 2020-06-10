@@ -19,13 +19,14 @@ using System.IO.Ports;
 using System.Windows.Threading;
 using Target_CNC_GC_08_04_20.Data;
 using Path = System.Windows.Shapes.Path;
+using Jitbit.Utils;
 
 namespace Target_CNC_GC_08_04_20
 {
 
     public partial class MainWindow : Window
     {
-
+        CsvExport CsvExport = new CsvExport();
         SerialPort ArduinoPort = new SerialPort();//Создаём последовательный порт 
         private delegate void updateDelegate(string txt);
 
@@ -48,20 +49,15 @@ namespace Target_CNC_GC_08_04_20
         {
             InitializeComponent();
             ResoltGrid.DataContext = App.resoultList;
+            
             //Создание и параметризация таймера
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Render);
-        timer.Tick += new EventHandler(timer_Tick);
-        timer.Interval = new TimeSpan(0, 0, 0, 1);
-        timer.Start();
-
-            //exercise.RealTime100ms = 0;
-
-            //App.LoadTarget();//Формирование коллекции мишеней при запуске программы
-
-
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Interval = new TimeSpan(0, 0, 0, 1);
+            timer.Start();
         }
 
-
+        //Тик таймера 1сек
         private void timer_Tick(object sender, EventArgs e)
         {
             if ((App.exercisePlay!=null) &&(App.exercisePlay.IsActiv == true))
@@ -69,32 +65,46 @@ namespace Target_CNC_GC_08_04_20
             App.exercisePlay.RealTime100ms++;
                 TimeNow.Value = App.exercisePlay.RealTime100ms;
                 buttonCaption.FontSize = 100;
-                buttonCaption.Text = (App.exercisePlay.AllTime- App.exercisePlay.RealTime100ms).ToString();
+                buttonCaption.Text = (App.exercisePlay.AllTime- App.exercisePlay.RealTime100ms).ToString(); 
+                
+                foreach(Shows sh in App.ShowsPlayList)
+                {
+                    if (App.exercisePlay.RealTime100ms == sh.StartTime)
+                    {
+                        String mess="";
+                        foreach (Target tg in App.TargetPlayList)
+                            if (sh.Target == tg.NameTarget) mess = tg.NomberIndicationBlock.ToString();
+                        if (sh.Type=="День")
+                        mess += "1";
+                        if (sh.Type == "Ночь")
+                            mess += "2";
+                        if (sh.ShowTimeSec > 9) mess += sh.ShowTimeSec.ToString();
+                        else mess+='0'+ sh.ShowTimeSec.ToString();
+                        mess += 'n';
+                        ArduinoPort.Write(mess);
+                        dataSerialTB.Text = mess;
+                    }
+                }
+               
+                //Блок для отрисовки крестика при промахе
+                if ((GetEndShow()!=null)&&(GetEndShow().Struck==false))
+                {
+                    GetEndShow().NoStruck = true;
+                    ProgressExerciseDG.ItemsSource = null;
+                    ProgressExerciseDG.ItemsSource = App.ShowsPlayList;
+                }
+               
+                //Определение окончания упражнения по времени
                 if (TimeNow.Value >= (App.exercisePlay.AllTime )) 
-                { App.exercisePlay.IsActiv = false;
+                { 
+                    App.exercisePlay.IsActiv = false;
                     SaveResoultPlayBut.IsEnabled = true;
                     ResetResoultPlayBut.IsEnabled = true;
                     MessageBox.Show("Упражнение окончено!", "Внимание!");
-                    //SartBut.IsEnabled = true;
-                    //buttonCaption.FontSize = 72;
-                    //buttonCaption.Text = "СТАРТ";
-                    //App.resoultList.Add(new Resoult(PersonNomberForPlayCB.Text, int.Parse(ScvodNomberForPlayCB.Text), Convert.ToDateTime(startTime.Text), CommentPlayTB.Text, App.ShowsPlayList));
-                    //App.PlayList1.Add(PersonNomberForPlayCB.Text);
-                    //App.PlayList1.Add(int.Parse(ScvodNomberForPlayCB.Text));
-                    //App.PlayList1.Add(Convert.ToDateTime(startTime.Text));
-                    //App.PlayList1.Add(CommentPlayTB.Text);
-                    //App.PlayList1.Add(App.Summ(App.ShowsPlayList));
-                    //foreach (Shows sh in App.ShowsPlayList)
-                    //{
-                    //    App.PlayList1.Add(sh.Struck.ToString());
-                    //    App.PlayList1.Add(sh.StruckTime100ms.ToString());
-                    //}
                 }
+               
             }
-            
-            // dataSerialTB.Text = exercise.RealTime100ms.ToString();
-            //if (count == 100) count = 0;
-            //if (exercise.RealTime100ms == 100) exercise.RealTime100ms = 0;
+
         }
 
 
@@ -126,13 +136,13 @@ namespace Target_CNC_GC_08_04_20
                             //newSens = false;
                             sens.Voltage = int.Parse(inputStr[2]);
                             sens.VoltageP = int.Parse(inputStr[2]);
-                            sens.Sensor1 = Convert.ToBoolean(int.Parse(inputStr[3]));
-                            sens.Sensor2 = Convert.ToBoolean(int.Parse(inputStr[4]));
+                            sens.Sensor1 = !Convert.ToBoolean(int.Parse(inputStr[3]));
+                            sens.Sensor2 = !Convert.ToBoolean(int.Parse(inputStr[4]));
                             sens.LastMessTime = DateTime.Now;
                             sensorsDG.ItemsSource = null;
                             var sortedUsers = App.SensorsList.OrderBy(u => u.Nomber);
                             sensorsDG.ItemsSource = sortedUsers;
-                            TargetTest(int.Parse(inputStr[1]), int.Parse(inputStr[2]), Convert.ToBoolean(int.Parse(inputStr[3])), Convert.ToBoolean(int.Parse(inputStr[4])));
+                            TargetTest(int.Parse(inputStr[1]), int.Parse(inputStr[2]), !Convert.ToBoolean(int.Parse(inputStr[3])), !Convert.ToBoolean(int.Parse(inputStr[4])));
                             return;
                         }
                     }
@@ -140,7 +150,7 @@ namespace Target_CNC_GC_08_04_20
                     sensorsDG.ItemsSource = null;
                     sensorsDG.ItemsSource = App.SensorsList;
                 }
-                TargetTest(int.Parse(inputStr[1]), int.Parse(inputStr[2]), Convert.ToBoolean(int.Parse(inputStr[3])), Convert.ToBoolean(int.Parse(inputStr[4])));
+                //TargetTest(int.Parse(inputStr[1]), int.Parse(inputStr[2]), Convert.ToBoolean(int.Parse(inputStr[3])), Convert.ToBoolean(int.Parse(inputStr[4])));
             }
             if (inputStr[0] == "2")
             {
@@ -181,7 +191,7 @@ namespace Target_CNC_GC_08_04_20
             {
                 if (App.exercisePlay.IsActiv)
                 {
-                    if ((sens1) || (sens2))
+                    if ((sens1==true) || (sens2==true))
                     {
                         if ((GetShows()!=null)&&(GetShows().Struck!=true))
                         if (GetShows().Target == GetSendTarget(nomber))
@@ -191,8 +201,21 @@ namespace Target_CNC_GC_08_04_20
                             GetShows().StruckTime100ms = App.exercisePlay.RealTime100ms - GetShows().StartTime;
                             ProgressExerciseDG.ItemsSource = null;
                             ProgressExerciseDG.ItemsSource = App.ShowsPlayList;
+                                foreach (Shows sh in App.ShowsPlayList)
+                                {
+                                    
+                                        String mess = "";
+                                        foreach (Target tg in App.TargetPlayList)
+                                            if (sh.Target == tg.NameTarget) mess = tg.NomberIndicationBlock.ToString();
+                                          mess += "3";
+                                       
+                                        mess += "05"+'n';
+                                        ArduinoPort.Write(mess);
+                                        dataSerialTB.Text = mess;
+                                    
+                                }
 
-                        }
+                            }
                     }
                 }
             }
@@ -210,7 +233,7 @@ namespace Target_CNC_GC_08_04_20
             return st;
         }
 
-        //Даёт имя мишени активной в данный момент времени
+        //Даёт показ активный в данный момент времени
         private Shows GetShows()
         {
             Shows SH = null;
@@ -225,46 +248,39 @@ namespace Target_CNC_GC_08_04_20
             }
             return SH;
         }
-
-        private void situation_Click(object sender, RoutedEventArgs e)
+        
+        //Даёт только что завершившийся показ
+        private Shows GetEndShow()
         {
-            TargetEnvironment TargetEnvironment = new TargetEnvironment();
-            TargetEnvironment.Show();
+            Shows SH = null;
+            foreach (Shows sh in App.ShowsPlayList)
+            {
+                if ((App.exercisePlay.RealTime100ms <= sh.StartTime + sh.ShowTimeSec+1) && (App.exercisePlay.RealTime100ms >= sh.StartTime + sh.ShowTimeSec))
+                {
+                    SH = sh;
+                    return SH;
+                }
+
+            }
+            return SH;
         }
 
-
+        
         private void Setings_Click(object sender, RoutedEventArgs e)
         {
             Window1 window1 = new Window1();
             window1.Show();
         }
 
-
-        //Random rnd1 = new Random(50);
-
-        private void rect_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            //Canvas.SetLeft(rect, e.GetPosition(can).X);
-            //Canvas.SetTop(rect, e.GetPosition(can).Y);
-
-
-        }
-
-        private void rect_MouseMove(object sender, MouseEventArgs e)
-        {
-            //Canvas.SetLeft(rect, e.GetPosition(can).X);
-            //Canvas.SetTop(rect, e.GetPosition(can).Y);
-        }
-
-        private void Person_Click(object sender, RoutedEventArgs e)
-        {
-            if (!App.q)
-            {
-                PeopleWin person = new PeopleWin();
-                person.Show();
-                App.q = true;
-            }
-        }
+        //private void Person_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (!App.q)
+        //    {
+        //        PeopleWin person = new PeopleWin();
+        //        person.Show();
+        //        App.q = true;
+        //    }
+        //}
 
         //Соединение с COM портом
         private void conectBT_Click(object sender, RoutedEventArgs e)
@@ -277,12 +293,15 @@ namespace Target_CNC_GC_08_04_20
                 try
                 {
                     ArduinoPort.Open();
-
-
                 }
                 catch
                 {
                     MessageBox.Show("Неудачно");
+                }
+                if (ArduinoPort.IsOpen)
+                {
+                    conectBT.IsEnabled = false;
+                    portsCB.IsEnabled = false;
                 }
             }
             else MessageBox.Show("Порт не выбран");
@@ -313,9 +332,15 @@ namespace Target_CNC_GC_08_04_20
 
         private void disConectBT_Click(object sender, RoutedEventArgs e)
         {
-
-            ArduinoPort.Close();
+            if (ArduinoPort.IsOpen)
+              
+                ArduinoPort.Close();
+                conectBT.IsEnabled = true;
+                portsCB.IsEnabled = true;
+            
         }
+           
+        
 
         private void portsCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -325,9 +350,8 @@ namespace Target_CNC_GC_08_04_20
 
 
         private void portsCB_MouseMove(object sender, MouseEventArgs e)
-        {
-            string[] ports = SerialPort.GetPortNames();
-            portsCB.ItemsSource = ports;
+       {
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1425,8 +1449,6 @@ namespace Target_CNC_GC_08_04_20
                 SaveResoultPlayBut.IsEnabled = false;
                 ResetResoultPlayBut.IsEnabled = false;
             }
-            
-
         }
 
         public void CleanExercise(string name)
@@ -1452,7 +1474,7 @@ namespace Target_CNC_GC_08_04_20
                     SartBut.IsEnabled = true;
                     buttonCaption.FontSize = 72;
                     buttonCaption.Text = "СТАРТ";
-
+                    CommentPlayTB.Text = "";
                 }
             }
             TimeNow.Value = 0;
@@ -1695,6 +1717,152 @@ namespace Target_CNC_GC_08_04_20
             CleanExercise(ExerciseNameForPlayCB.Text); //Подготовка формы упражнения для нового участника
             SaveResoultPlayBut.IsEnabled = false;
             ResetResoultPlayBut.IsEnabled = false;
+        }
+
+        private void portsCB_DropDownOpened(object sender, EventArgs e)
+        {
+
+        string[] ports = SerialPort.GetPortNames();
+        portsCB.ItemsSource = ports;
+    }
+
+        private void FilterCB_DropDownOpened(object sender, EventArgs e)
+        {
+            App.ExerciseListForFilter.Clear();
+            if (ResoltGrid.DataContext== App.resoultList)
+            {
+                foreach (Resoult res in App.resoultList)
+                            {
+                                if (App.ExerciseListForFilter.Contains(res.Exercise)==false)
+                                    App.ExerciseListForFilter.Add(res.Exercise);
+
+                            }
+            }
+            if (ResoltGrid.DataContext == App.resoultListFilter)
+            {
+                foreach (Resoult res in App.resoultListFilter)
+                {
+                    if (App.ExerciseListForFilter.Contains(res.Exercise) == false)
+                        App.ExerciseListForFilter.Add(res.Exercise);
+
+                }
+            }
+            App.ExerciseListForFilter.Add("Все упражнения");
+            FilterCB.ItemsSource = null;
+            FilterCB.ItemsSource = App.ExerciseListForFilter;
+        }
+
+        private void FilterCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            String selectedItem = (String)comboBox.SelectedItem;
+            if (selectedItem != "")
+            {
+                if (selectedItem== "Все упражнения") ResoltGrid.DataContext = App.resoultList; else
+            {
+                App.resoultListFilter.Clear();
+                foreach (Resoult res in App.resoultList)
+                {
+                 if (res.Exercise== selectedItem)
+                    {
+                    App.resoultListFilter.Add(res);
+                    }
+                }
+                ResoltGrid.DataContext = App.resoultListFilter;
+
+            }
+            
+            }            
+        }
+
+        private void SaveResoltToExele_Click(object sender, RoutedEventArgs e)
+        {
+           
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "Document"; // Default file name
+            dlg.DefaultExt = ".csv"; // Default file extension
+            string filename;
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // Save document
+                 filename = dlg.FileName;
+                if (ResoltGrid.DataContext == App.resoultList)
+            {
+                foreach (Resoult res in App.resoultList)
+                {
+                    SaveInCsv(res.PersonNomber, res.Scvod, res.StartTime, res.Summ);
+                }
+            }
+            if (ResoltGrid.DataContext == App.resoultListFilter)
+            {
+                foreach (Resoult res in App.resoultListFilter)
+                {
+                    SaveInCsv(res.PersonNomber, res.Scvod, res.StartTime, res.Summ);
+                }
+            }
+            CsvExport.ExportToFile(filename);
+            }
+            
+                
+        }
+
+        void SaveInCsv(string person, int scvod, string starttime, int points)
+        {
+            CsvExport.AddRow();
+            CsvExport["Участник"] = person;
+            CsvExport["ФИО"] = person;
+            CsvExport["Сквод"] = scvod;
+            CsvExport["Время начала упражнения"] = starttime;
+            CsvExport["Очки"] = points;
+            
+        }
+
+       
+        private void Test_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var temp = indicationDG.SelectedItem as IndicationBlock;
+                String messs = temp.Nomber.ToString() + "3" + "05" + 'n';
+                if (ArduinoPort.IsOpen)
+                    ArduinoPort.Write(messs);
+                dataSerialTB.Text = messs;
+            }
+            catch { MessageBox.Show("О-оу"); }
+        }
+
+        private void sensorsDG_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            
+
+        }
+
+        private void indicationDG_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            //if (e.Column.DisplayIndex == 5)
+            //{
+            //    var temp = e.Row.Item as IndicationBlock;
+            //    String messs = temp.Nomber.ToString() + "3" + "05" + 'n';
+            //    if (ArduinoPort.IsOpen)
+            //        ArduinoPort.Write(messs);
+            //    dataSerialTB.Text = messs;
+            //}
+        }
+
+        private void indicationDG_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //if (e.Column.DisplayIndex == 5)
+            //{
+            //    var temp = indicationDG.SelectedItem as IndicationBlock;
+            //    String messs = temp.Nomber.ToString() + "3" + "05" + 'n';
+            //    if (ArduinoPort.IsOpen)
+            //        ArduinoPort.Write(messs);
+            //    dataSerialTB.Text = messs;
+            //}
         }
 
         //Метод отрисовки размерных линий

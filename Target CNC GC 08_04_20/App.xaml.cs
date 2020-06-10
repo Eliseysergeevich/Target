@@ -29,6 +29,7 @@ namespace Target_CNC_GC_08_04_20
         public static ObservableCollection<IndicationBlock> IndicationList = new ObservableCollection<IndicationBlock> { }; //Коллекция блоков индикации
         public static ObservableCollection<Shows> ShowsList = new ObservableCollection<Shows> { }; //Коллекция показов при настройке
         public static ObservableCollection<Resoult> resoultList = new ObservableCollection<Resoult> { }; //Коллекция результатов при настройке
+        public static ObservableCollection<Resoult> resoultListFilter = new ObservableCollection<Resoult> { }; //Коллекция результатов при настройке
         public static ObservableCollection<Object> PlayList1 = new ObservableCollection<Object> { }; //Коллекция результатов при настройке
 
         public static ObservableCollection<Target> TargetPlayList = new ObservableCollection<Target> { };//Коллекция мишеней в упражнении при выполнении
@@ -37,6 +38,7 @@ namespace Target_CNC_GC_08_04_20
         public static List<string> AllTargetName = new List<string>();
         public static List<string> AllExerciseName = new List<string>();
         public static List<int> PersonInScvod = new List<int>();
+        public static List<string> ExerciseListForFilter = new List<string>();
 
         public static Exercise exerciseActiv, exercisePlay;
         public static bool NomberMore0Int(string st)

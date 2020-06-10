@@ -18,6 +18,7 @@ namespace Target_CNC_GC_08_04_20.Data
         public string Comment { get; set; }
         public ObservableCollection<Shows> PlayList { get; set; }
         public int Summ { get; set; }
+        
         public Resoult(string exercise,string nomber, int scvod, DateTime time, string comment, ObservableCollection<Shows> shows)
         {
             this.Exercise = exercise;
@@ -26,6 +27,7 @@ namespace Target_CNC_GC_08_04_20.Data
             this.StartTime = time.ToLongTimeString();
             this.StartDate = time.ToLongDateString();
             this.Comment = comment;
+          
             //this.PlayList = shows;
             this.PlayList = new ObservableCollection<Shows>();
             foreach (Shows sh in shows)

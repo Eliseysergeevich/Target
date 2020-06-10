@@ -137,7 +137,7 @@
                                         <Label Content="сек" FontSize="18"/>
                                     </StackPanel>
                                     <GroupBox Header="Описание упражнения" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                                        <TextBox x:Name="AboutExercisePlayTB" TextWrapping="Wrap" IsReadOnly="True" Width="auto" Height="auto" />
+                                        <TextBox x:Name="AboutExercisePlayTB" TextWrapping="Wrap" IsReadOnly="True" Width="auto" Height="auto" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" />
                                     </GroupBox>
                                 </Grid>
                                 <Grid Grid.Row="0" Grid.Column="1">
@@ -173,24 +173,29 @@
                                                 <TextBlock Text="Участник № - " Grid.Column="2" Width="112"/>
                                                 <TextBox Text="{Binding ElementName=PersonNomberForPlayCB, Path=Text}" IsReadOnly="True" FontSize="24" Foreground="Red" Grid.Column="3" HorizontalAlignment="Left" FontWeight="Bold" Width="50"/>
                                             </Grid>
-                                            <DataGrid x:Name="ProgressExerciseDG" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True">
+                                            <DataGrid x:Name="ProgressExerciseDG" Grid.Row="2" AutoGenerateColumns="False" >
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Показ №" Binding="{Binding Path=Serial}"/>
-                                                    <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}"/>
-                                                    <DataGridTextColumn Header="Мишень" Binding="{Binding Path=Target}"/>
-                                                    <DataGridTemplateColumn Header="Датчик">
+                                                    <DataGridTextColumn Header="Показ №" Binding="{Binding Path=Serial}" IsReadOnly="True"/>
+                                                    <DataGridTextColumn Header="Время начала" Binding="{Binding Path=StartTime}" IsReadOnly="True"/>
+                                                    <DataGridTextColumn Header="Мишень" Binding="{Binding Path=Target}" IsReadOnly="True"/>
+                                                    <DataGridTemplateColumn Header="Результат" IsReadOnly="True">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
-                                                                <Image Width="30" Source="Imag\Галочка.png" Opacity="{Binding Path=Struck}"/>
+                                                                <Grid>
+                                                                    <Image Width="30" Source="Imag\Галочка.png" Opacity="{Binding Path=Struck}"/>
+                                                                    <Image Width="30" Source="Imag\крестик.png" Opacity="{Binding Path=NoStruck}"/>
+                                                                </Grid>
+
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-                                                    <DataGridTextColumn Header="Результат" Binding="{Binding Path=Struck}"/>
-                                                    <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
+                                                   
+                                                    <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}" IsReadOnly="True"/>
+                                                    <DataGridTextColumn Header="Выстрел №" Binding="{Binding Path=ShotNomber}" IsReadOnly="False"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                             <GroupBox Header="Комментарий" Grid.Row="3">
-                                                <TextBox x:Name="CommentPlayTB" TextWrapping="Wrap" Height="100"/>
+                                                <TextBox x:Name="CommentPlayTB" TextWrapping="Wrap" Height="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto"/>
                                             </GroupBox>
                                         </Grid>
                                     </GroupBox>
@@ -211,7 +216,7 @@
                                                 </LinearGradientBrush>
                                             </Button.Background>
                                         </Button>
-                                        <Button x:Name="ResetResoultPlayBut" Content="Сбросить" Width="auto" VerticalAlignment="Bottom" Grid.Column="1" IsEnabled="False" Click="ResetResoultPlayBut_Click">
+                                        <Button x:Name="ResetResoultPlayBut" Content="Сбросить" Width="auto" VerticalAlignment="Bottom" Grid.Column="1" IsEnabled="False" Click="ResetResoultPlayBut_Click" Height="35">
                                             <Button.Background>
                                                 <LinearGradientBrush>
                                                     <GradientStop Color="Firebrick" Offset="0.926"/>
@@ -319,7 +324,7 @@
                                     <Label x:Name="AllTimeExerciseLB" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" FontSize="16"/>
                                 </Grid>
                                 <GroupBox Header="Описание" Grid.Row="4">
-                                    <TextBox x:Name="AboutExerciseTB" TextWrapping="Wrap" Width="auto" Height="auto"/>
+                                    <TextBox x:Name="AboutExerciseTB" TextWrapping="Wrap" Width="auto" Height="auto" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"/>
                                 </GroupBox>
                                 <Button x:Name="AddExerciseBut" Grid.Row="5" HorizontalAlignment="Left" Content="Добавить" Click="AddExerciseBut_Click" Height="30" Width="150">
                                     <Button.Background>
@@ -584,7 +589,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="3">
+                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="3" BeginningEdit="sensorsDG_BeginningEdit">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
                                     <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
@@ -615,13 +620,17 @@
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
+                                   
                                 </DataGrid.Columns>
+                               
+                                        
+                                    
                             </DataGrid>
-                            <DataGrid x:Name="indicationDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="3">
+                            <DataGrid x:Name="indicationDG" AutoGenerateColumns="False"  Grid.Column="3" BeginningEdit="indicationDG_BeginningEdit" SelectionChanged="indicationDG_SelectionChanged">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
-                                    <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
-                                    <DataGridTemplateColumn Header="Напряжение %" >
+                                    <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Header="Напряжение %" IsReadOnly="True" >
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
@@ -632,23 +641,27 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Header="Режим" Binding="{Binding Path=Type}"/>
-                                    <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
+                                    <DataGridTextColumn Header="Режим" Binding="{Binding Path=Type}" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Header="Тест">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button x:Name="Test" Content="Тест" Click="Test_Click"/>
+                                                <!--<Label Content="Тест" />-->
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Участники">
                         <Grid >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Grid.Column="0">
+                            <Grid Grid.Row="0" >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="7*"/>
                                     <ColumnDefinition Width="1*"/>
@@ -683,32 +696,24 @@
                                 </GroupBox>
                                 <GroupBox Grid.Column="1" Header="Всего скводов" HorizontalAlignment="Right" FontSize="14">
                                     <TextBox x:Name="allScvodTextBox" Foreground="Black" FontStyle="Normal" TextAlignment="Center"
-                         TextChanged="allScvodTextBox_TextChanged" GotFocus="allScvodTextBox_GotFocus" LostFocus="allScvodTextBox_LostFocus">
-
+                                        TextChanged="allScvodTextBox_TextChanged" GotFocus="allScvodTextBox_GotFocus" LostFocus="allScvodTextBox_LostFocus">
                                     </TextBox>
-
                                 </GroupBox>
-
-                            </Grid>
-                            <Grid Grid.Row="0" Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock  Grid.Column="0" Text="Таблица результатов" FontSize="24" FontFamily="Arial" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Italic">
-                                    <TextBlock.Foreground>
-                                        <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                                            <GradientStop Color="#FFF70D0D" Offset="0.265"/>
-                                            <GradientStop Color="White"/>
-                                            <GradientStop Color="#FFFBF5F5" Offset="1"/>
-                                            <GradientStop Color="#FFF73D3D" Offset="0.791"/>
-                                        </LinearGradientBrush>
-                                    </TextBlock.Foreground>
-                                </TextBlock>
-
                             </Grid>
 
-                            <Grid x:Name="ResoltGrid" Grid.Column="1" Grid.Row="1" >
+                            <DataGrid x:Name="personLB" Grid.Row="1" Width="860" Margin="5" ColumnWidth="20" AutoGenerateColumns="False" FontSize="16" HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Номер" Binding= "{Binding Path=Nomber}" Width="85"/>
+                                    <DataGridTextColumn Header="Сквод" Binding= "{Binding Path=Scvod}" Width="85"/>
+                                    <DataGridTextColumn Header="Имя" Binding= "{Binding Path=Name}" Width="230"/>
+                                    <DataGridTextColumn Header="Фамилия" Binding= "{Binding Path=Fam}" Width="230"/>
+                                    <DataGridTextColumn Header="Отчество" Binding= "{Binding Path=MiddleName}" Width="230"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid> 
+                        
+                    </TabItem>
+                    <!--<Grid x:Name="ResoltGrid" Grid.Column="1" Grid.Row="1" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
                                     <RowDefinition Height="auto"/>
@@ -754,7 +759,9 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <!--<DataGridTextColumn Header="Показ" Binding="{Binding Path=Playlist}"/>-->
+                                        -->
+                    <!--<DataGridTextColumn Header="Показ" Binding="{Binding Path=Playlist}"/>-->
+                    <!--
                                         <DataGridTemplateColumn Header="Ход выполнения" >
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
@@ -781,31 +788,107 @@
                             <Grid Grid.Row="1" >
 
                                 <DataGrid x:Name="personLB"  Width="860" Margin="5" ColumnWidth="20" AutoGenerateColumns="False" FontSize="16" HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto">
-
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Номер" Binding= "{Binding Path=Nomber}" Width="85"/>
                                         <DataGridTextColumn Header="Сквод" Binding= "{Binding Path=Scvod}" Width="85"/>
                                         <DataGridTextColumn Header="Имя" Binding= "{Binding Path=Name}" Width="230"/>
                                         <DataGridTextColumn Header="Фамилия" Binding= "{Binding Path=Fam}" Width="230"/>
                                         <DataGridTextColumn Header="Отчество" Binding= "{Binding Path=MiddleName}" Width="230"/>
-
                                     </DataGrid.Columns>
-
-
                                 </DataGrid>
-
                             </Grid>
+                        </Grid>-->
 
-
-
-
-
-
-                        </Grid>
-                    </TabItem>
                     <TabItem Header="Результаты">
+                        <Grid x:Name="ResoltGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid  Grid.Column="0" Grid.Row="0">
+                                <GroupBox Header="Фильтр" HorizontalAlignment="Left">
+                                    <ComboBox x:Name="FilterCB" Width="250" Height="30" DropDownOpened="FilterCB_DropDownOpened" SelectionChanged="FilterCB_SelectionChanged" />
+                                </GroupBox>
+                                <Button x:Name="SaveResoltToExele" Content="Экспорт в Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SaveResoltToExele_Click"/>
+                            </Grid>
+                            <DataGrid x:Name="ResultDG"  Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="true" FontSize="16" >
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Упражнение" FontSize="16" Binding="{Binding Path=Exercise}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Участник" Binding="{Binding Path=PersonNomber}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Сквод" Binding="{Binding Path=Scvod}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTemplateColumn Header="Начал упражнение" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Path=StartDate}" TextAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Path=StartTime}" TextAlignment="Center"/>
+                                                </StackPanel>
 
-                    </TabItem>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Очки" Binding="{Binding Path=Summ}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                   
+                                    <DataGridTextColumn Header="Комментарий" Binding="{Binding Path=Comment}"/>
+                                    <!--<DataGridTextColumn Header="Показ" Binding="{Binding Path=Playlist}"/>-->
+                                    <!--<DataGridTemplateColumn Header="Ход выполнения" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <DataGrid  AutoGenerateColumns="False" ItemsSource="{Binding Path=PlayList}" >
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Показ" Binding="{Binding  Path=Serial}"/>
+                                                        <DataGridCheckBoxColumn Header="Попадание" Binding="{Binding Path=Struck}"/>
+                                                        <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>-->
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <DataGrid x:Name="ShowsInResDG" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Path=PlayList}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Показ" Binding="{Binding Path=Serial}"/>
+                                    <DataGridCheckBoxColumn Header="Попадание" Binding="{Binding Path=Struck}"/>
+                                    <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}"/>
+                                    <DataGridTextColumn Header="Выстрел №" Binding="{Binding Path=ShotNomber}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+
+                     
+                       
+            
+          
+            </TabItem>
 
 
                 </TabControl>
@@ -848,7 +931,7 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <ComboBox Name="portsCB" Width="150" Height="25" HorizontalAlignment="Left" Margin="5,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}" FlowDirection="LeftToRight"/>
+                    <ComboBox Name="portsCB" Width="150" Height="25" HorizontalAlignment="Left" Margin="5,1" SelectionChanged="portsCB_SelectionChanged"  MouseMove="portsCB_MouseMove" IsEnabled="{Binding Source=ArduinoPort, Path=IsOpen}" FlowDirection="LeftToRight" DropDownOpened="portsCB_DropDownOpened"/>
 
                 </StackPanel>
 

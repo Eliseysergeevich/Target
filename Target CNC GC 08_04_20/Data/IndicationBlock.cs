@@ -21,7 +21,7 @@ namespace Target_CNC_GC_08_04_20.Data
             }
             set
             {
-                voltage = Math.Round(value / 41.0, 2);
+                voltage = (value / 10);
             }
         }
         public int VoltageP
@@ -32,7 +32,7 @@ namespace Target_CNC_GC_08_04_20.Data
             }
             set
             {
-                voltageP = (int)Math.Round((value / 41.0 * 42.735) - 269.231);
+                voltageP = (int)Math.Round((value /10 * 42.735) - 269.231);
             }
         }
         public IndicationBlock(int nomber, int volt, int type)
