@@ -189,7 +189,7 @@
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-                                                   
+
                                                     <DataGridTextColumn Header="Время" Binding="{Binding Path=StruckTime100ms}" IsReadOnly="True"/>
                                                     <DataGridTextColumn Header="Выстрел №" Binding="{Binding Path=ShotNomber}" IsReadOnly="False"/>
                                                 </DataGrid.Columns>
@@ -292,9 +292,11 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
                                             <RowDefinition/>
+                                            <RowDefinition/>
                                         </Grid.RowDefinitions>
                                         <TextBlock Text="Широта" Grid.Row="0" Grid.Column="0" />
                                         <TextBlock Text="Долгота" Grid.Row="1" Grid.Column="0" />
+                                        <TextBlock Text="Высота, м" Grid.Row="2" Grid.Column="0" />
                                         <Grid Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
@@ -313,6 +315,7 @@
                                         </Grid>
                                         <TextBox x:Name="startLatitudeTB" Grid.Row="0" Grid.Column="2"  Foreground="Black"/>
                                         <TextBox x:Name="startLongitudeTB" Grid.Row="1" Grid.Column="2" Foreground="Black"/>
+                                        <TextBox x:Name="startAltitudeTB" Grid.Row="2" Grid.Column="2" Foreground="Black"/>
                                     </Grid>
                                 </GroupBox>
                                 <Grid Grid.Row="3">
@@ -411,9 +414,10 @@
                                         <TextBox x:Name="IndicationBlockTB" Height="25" Foreground="Black" TextChanged="IndicationBlockTB_TextChanged"  />
                                     </GroupBox>
                                 </Grid>
-                                <GroupBox x:Name="TargetCoordinatesGB" Grid.Row="4" Header="Координаты">
+                                <GroupBox x:Name="TargetCoordinatesGB" Grid.Row="4" Header="Координаты и высота">
                                     <Grid >
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
@@ -428,7 +432,7 @@
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
                                             <RadioButton GroupName="latitudeNew" x:Name="NLatNewRB" Content="с.ш." Grid.Column="0" Checked="NLatNewRB_Checked"  />
-                                            <RadioButton GroupName="latitudeNew" x:Name="ELatNewRB" Content="ю.ш." Grid.Column="1" Checked="ELatNewRB_Checked" HorizontalAlignment="Right" Width="90"  />
+                                            <RadioButton GroupName="latitudeNew" x:Name="ELatNewRB" Content="ю.ш." Grid.Column="1" Checked="ELatNewRB_Checked"   />
                                         </Grid>
                                         <TextBox x:Name="TargeLongTB" Grid.Column="1" Grid.Row="0" Height="25" Margin="3" Foreground="Black" TextChanged="TargeLongTB_TextChanged"  />
                                         <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
@@ -439,10 +443,13 @@
                                             <RadioButton GroupName="longetudeNew" x:Name="WLonNewRB" Content="з.д." Grid.Column="0" Checked="WLonNewRB_Checked"  />
                                             <RadioButton GroupName="longetudeNew" x:Name="ELonNewRB" Content="в.д." Grid.Column="1" Checked="ELonNewRB_Checked"  />
                                         </Grid>
+                                        <TextBox x:Name="TargeAltTB" Grid.Column="2" Grid.Row="0" Height="25" Margin="3" Foreground="Black" Background="White" />
+                                        <TextBlock Text="Высота, м" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" />
                                     </Grid>
                                 </GroupBox>
                                 <Grid Grid.Row="5">
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
@@ -451,6 +458,9 @@
                                     </GroupBox>
                                     <GroupBox x:Name="AngleCB" Grid.Column="1" Header="Азимут">
                                         <TextBox x:Name="AngleTB" IsReadOnly="True" Background="Gainsboro"/>
+                                    </GroupBox>
+                                    <GroupBox x:Name="AltDeltaCB" Grid.Column="2" Header="Перепад высот, м"  >
+                                        <TextBox x:Name="AltDeltaTB" IsReadOnly="True" Background="Gainsboro"/>
                                     </GroupBox>
                                 </Grid>
                                 <Button x:Name="AddTargenButton" Grid.Row="6" HorizontalAlignment="Left" Content="Добавить" Foreground="#FFF9F5F5" Click="AddTargenButton_Click" Height="30" Width="150"  >
@@ -589,7 +599,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="3" BeginningEdit="sensorsDG_BeginningEdit">
+                            <DataGrid x:Name="sensorsDG" AutoGenerateColumns="False" Grid.Column="0" Grid.ColumnSpan="3" BeginningEdit="sensorsDG_BeginningEdit">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Номер" FontSize="16"  Binding="{Binding Path=Nomber}"/>
                                     <DataGridTextColumn Header="Напряжение В." FontSize="16"  Binding="{Binding Path=Voltage}"/>
@@ -620,11 +630,11 @@
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Время" FontSize="16" Binding="{Binding Path=LastMessTime}"/>
-                                   
+
                                 </DataGrid.Columns>
-                               
-                                        
-                                    
+
+
+
                             </DataGrid>
                             <DataGrid x:Name="indicationDG" AutoGenerateColumns="False"  Grid.Column="3" BeginningEdit="indicationDG_BeginningEdit" SelectionChanged="indicationDG_SelectionChanged">
                                 <DataGrid.Columns>
@@ -646,7 +656,16 @@
                                     <DataGridTemplateColumn Header="Тест">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button x:Name="Test" Content="Тест" Click="Test_Click"/>
+                                                <Button x:Name="Test" Content="Тест" Click="Test_Click">
+                                                    <Button.Background>
+                                                        <LinearGradientBrush EndPoint="0,0" MappingMode="RelativeToBoundingBox" StartPoint="1,0">
+                                                            <GradientStop Color="#FFFDFCFA" Offset="0.005"/>
+                                                            <GradientStop Color="#FFECB41F" Offset="0.087"/>
+                                                            <GradientStop Color="#FFECB41F" Offset="0.913"/>
+                                                            <GradientStop Color="#FFF9F9F8" Offset="0.997"/>
+                                                        </LinearGradientBrush>
+                                                    </Button.Background>
+                                                </Button>
                                                 <!--<Label Content="Тест" />-->
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -710,8 +729,8 @@
                                     <DataGridTextColumn Header="Отчество" Binding= "{Binding Path=MiddleName}" Width="230"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                        </Grid> 
-                        
+                        </Grid>
+
                     </TabItem>
                     <!--<Grid x:Name="ResoltGrid" Grid.Column="1" Grid.Row="1" >
                                 <Grid.RowDefinitions>
@@ -856,7 +875,7 @@
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                   
+
                                     <DataGridTextColumn Header="Комментарий" Binding="{Binding Path=Comment}"/>
                                     <!--<DataGridTextColumn Header="Показ" Binding="{Binding Path=Playlist}"/>-->
                                     <!--<DataGridTemplateColumn Header="Ход выполнения" >
@@ -884,18 +903,19 @@
                             </DataGrid>
                         </Grid>
 
-                     
-                       
-            
-          
-            </TabItem>
+
+
+
+
+                    </TabItem>
 
 
                 </TabControl>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" >
 
-                    <TextBlock x:Name="dataSerialTB" Width="150" Text="{Binding Path=RealTime100ms}" />
+                    <TextBlock x:Name="dataSerialTB" Width="150"  />
+                    <TextBlock x:Name="dataSerialTB1" Width="150"  />
                 </StackPanel>
 
             </Grid>

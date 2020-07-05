@@ -19,7 +19,7 @@ namespace Target_CNC_GC_08_04_20.Data
         public bool NoStruck { get; set; }
         public int StruckTime100ms { get; set; }
         public int ShotNomber { get; set; }
-        public static string[] arrayTypeShows = {"День","Ночь"};
+        public static string[] arrayTypeShows = {"День","Ночь","Ключ"};
 
         public Shows(int serial, string target, string type, int pretimesec, int showtimesec )
         {

@@ -78,10 +78,17 @@ namespace Target_CNC_GC_08_04_20
                         mess += "1";
                         if (sh.Type == "Ночь")
                             mess += "2";
+                        if (sh.Type == "Ключ")
+                            mess += "4";
                         if (sh.ShowTimeSec > 9) mess += sh.ShowTimeSec.ToString();
                         else mess+='0'+ sh.ShowTimeSec.ToString();
                         mess += 'n';
-                        ArduinoPort.Write(mess);
+                        //for (int i = 0; i < 2; i++)
+                        //{
+                            ArduinoPort.Write(mess);
+                           
+                        //}
+                       
                         dataSerialTB.Text = mess;
                     }
                 }
@@ -116,8 +123,13 @@ namespace Target_CNC_GC_08_04_20
         //Чтение данных с COM порта
         public void updateCOMData(string txt)
         {
+            dataSerialTB1.Text = txt;
             txt = txt.Trim(',');
+            dataSerialTB1.Text = txt;
             string[] inputStr = txt.Split(',');
+            
+          
+                
             if (inputStr[0] == "1")
             {
                 if (App.SensorsList.Count == 0)// Если блоки датчиков отсутствуют в коллекции
@@ -201,19 +213,22 @@ namespace Target_CNC_GC_08_04_20
                             GetShows().StruckTime100ms = App.exercisePlay.RealTime100ms - GetShows().StartTime;
                             ProgressExerciseDG.ItemsSource = null;
                             ProgressExerciseDG.ItemsSource = App.ShowsPlayList;
-                                foreach (Shows sh in App.ShowsPlayList)
-                                {
+                                
                                     
                                         String mess = "";
                                         foreach (Target tg in App.TargetPlayList)
-                                            if (sh.Target == tg.NameTarget) mess = tg.NomberIndicationBlock.ToString();
+                                            if (GetShows().Target == tg.NameTarget) mess = tg.NomberIndicationBlock.ToString();//
                                           mess += "3";
                                        
                                         mess += "05"+'n';
-                                        ArduinoPort.Write(mess);
+                                
+                                    //for (int i = 0; i < 5; i++) {
+                                    ArduinoPort.Write(mess); 
+                                    //Thread.Sleep(100); }
+
+                                       
                                         dataSerialTB.Text = mess;
-                                    
-                                }
+   
 
                             }
                     }
@@ -302,6 +317,12 @@ namespace Target_CNC_GC_08_04_20
                 {
                     conectBT.IsEnabled = false;
                     portsCB.IsEnabled = false;
+                    App.IndicationList.Clear();
+                    App.SensorsList.Clear();
+                    indicationDG.ItemsSource = null;
+                    indicationDG.ItemsSource = App.IndicationList;
+                    sensorsDG.ItemsSource = null;
+                    sensorsDG.ItemsSource = App.SensorsList;
                 }
             }
             else MessageBox.Show("Порт не выбран");
@@ -315,7 +336,7 @@ namespace Target_CNC_GC_08_04_20
                 try
                 {
                     string indata = ArduinoPort.ReadLine();
-
+                   
                     dataSerialTB.Dispatcher.BeginInvoke(new updateDelegate(updateCOMData), indata);
                 }
                 catch
@@ -1038,7 +1059,8 @@ namespace Target_CNC_GC_08_04_20
                 if (App.exercisePlay.IsActiv)
                 {
                     SartBut.IsEnabled = false;
-
+                    if (ArduinoPort.IsOpen)
+                    ArduinoPort.Write("an");
                 }
             }
             
@@ -1829,8 +1851,14 @@ namespace Target_CNC_GC_08_04_20
                 var temp = indicationDG.SelectedItem as IndicationBlock;
                 String messs = temp.Nomber.ToString() + "3" + "05" + 'n';
                 if (ArduinoPort.IsOpen)
-                    ArduinoPort.Write(messs);
+                    for (int i = 0; i < 3; i++) { 
+                ArduinoPort.Write(messs);
+
+
+                    }
+               
                 dataSerialTB.Text = messs;
+                
             }
             catch { MessageBox.Show("О-оу"); }
         }
